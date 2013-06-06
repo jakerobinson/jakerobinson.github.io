@@ -20,7 +20,7 @@ meta:
 ---
 Because of the unique requirement of VMs to exist inside vApps in vCloud Director, it's a challenge to get a nice view of all the VMs and their locations within your vCloud Organization. This can mostly be satisfied with a <span style="color:#3366ff;">Get-CIVM</span> command, which will return great info about your VMs, but it's missing the storage assignment. Here's a sweet little script to report specifically on the VM resources in use inside your vCloud Organization:
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 $vms = get-civm
 $objects = @()
@@ -36,7 +36,7 @@ foreach($vm in $vms)
 # Use select object to get the column order right. Sort by vApp. Force table formatting and auto-width.
 $objects | select-Object name,vapp,cpuCount,memoryGB,storageGB | Sort-Object -Property vapp | Format-Table -AutoSize
 
-[/sourcecode]
+{% endhighlight %}
 <div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
 <p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"></p>
 
