@@ -1,0 +1,80 @@
+---
+layout: post
+title: vCloud Director Snapshots with PowerCLI
+tags:
+- PowerCLI
+- powershell
+- snapshots
+- vCloud
+- vCloud API
+- vcloud director 5.1
+- vmware
+- Windows Powershell
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post: #vCloud Director Snapshots with #PowerCLI'
+  _wpas_done_209084: '1'
+  publicize_reach: a:2:{s:7:"twitter";a:1:{i:209084;i:662;}s:2:"wp";a:1:{i:0;i:12;}}
+---
+If you or your provider are already running vCloud Director 5.1, you now have access to take a single snapshot of your VMs!
+
+If you want to play with snapshots in PowerCLI, you're going to need the module in this blog. PowerCLI 5.1 currently only supports the vCloud API 1.5, which means there are no 5.1 API capabilities yet. (I stress "yet." :D)
+
+The module uses the current PowerCLI for it's session and API access, and then bolts on some 5.1 API snapshot magic.
+
+To use the module, simply download the <a href="https://dl.dropbox.com/u/225399/vCloudSnapshots.psm1" target="_blank">.psm1 file</a> and:
+
+[sourcecode language="powershell"]
+
+Import-Module vCloudSnapshots.psm1
+
+[/sourcecode]
+
+After that, you'll have access to 4 cmdlets:
+
+[sourcecode language="powershell"]
+
+Get-CISnapshot
+New-CISnapshot
+Remove-CISnapshot
+Set-CISnapshot
+
+[/sourcecode]
+
+To get snapshots:
+
+[sourcecode language="powershell"]
+
+# Get vApps with Snapshots
+Get-CIVapp | Get-CISnapshot
+
+# Get VMs with Snapshots
+Get-CIVM | Get-CISnapshot
+
+# Get Snapshot info for a particular VM
+Get-CIVM &quot;MyVM&quot; | GetCISnapshot
+
+[/sourcecode]
+
+It should be noted that all the cmdlets apply to a VM or vApp, so always make sure you're doing a Get-CIVM or Get-CIVapp first.
+
+For example...here's creating, reverting, and removing:
+
+[sourcecode language="powershell"]
+
+# Create a snapshot for a vApp (or all VMs in the vApp, really.)
+Get-CIVApp &quot;MyVApp&quot; | New-CISnapshot
+
+# Revert to our snapshot
+Get-CIVApp &quot;MyVApp&quot; | Set-CISnapshot -revertToCurrent
+
+# Remove our snapshot
+Get-CIVApp &quot;MyVApp&quot; | Remove-CISnapshot
+
+[/sourcecode]
+
+For more help, just use <span style="color:#0000ff;">Get-Help</span> and the command!
+
+<a href="https://dl.dropbox.com/u/225399/vCloudSnapshots.psm1" target="_blank">vCloud Snapshots Powershell Module</a>

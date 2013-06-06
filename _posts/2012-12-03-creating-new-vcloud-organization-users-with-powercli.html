@@ -1,0 +1,59 @@
+---
+layout: post
+title: Creating new vCloud Organization users with PowerCLI
+tags:
+- PowerCLI
+- user
+- vCloud
+- vCloud API
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  publicize_reach: a:2:{s:7:"twitter";a:1:{i:209084;i:698;}s:2:"wp";a:1:{i:0;i:13;}}
+  publicize_twitter_user: jakerobinson
+  _wpas_mess: ! 'New Post: Creating new #vCloud Organization users with #PowerCLI'
+  _wpas_done_209084: '1'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:14061017;b:1;}}
+---
+&nbsp;
+
+There is not a New-CIUser cmdlet *yet*, but I'll show you the way you can do it now!
+
+We'll need 3 things: A username, a password, and a role.
+
+To get the role we want to assign the user, we'll need to use Search-Cloud:
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#0000ff;">Search-Cloud </span><span style="color:#000080;">-QueryType </span><span style="color:#8a2be2;">Role </span><span style="color:#a9a9a9;">| </span><span style="color:#0000ff;">select </span><span style="color:#8a2be2;">Name </span></p>
+
+</div>
+This will give us a list of roles. Pick a role name. As an example, I want to add an Org admin, so I am going to run this:
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$role </span><span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">Search-Cloud </span><span style="color:#000080;">-QueryType </span><span style="color:#8a2be2;">Role </span><span style="color:#000080;">-Name </span><span style="color:#8b0000;">"Organization Administrator" </span><span style="color:#a9a9a9;">| </span><span style="color:#0000ff;">Get-CIView </span></p>
+
+</div>
+The previous line queried for the role, retrieved the role object using Get-CIView and assigned it to the $role variable.
+
+Congrats, that was the hardest part... on to the good stuff!
+
+We need to do two things next... Get our Org object, and create a new user object:
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$org </span><span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">Get-Org</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$user </span><span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.VimAutomation.Cloud.Views.User </span></p>
+
+</div>
+Now we assign the fun stuff to our user object (name, password, role)!
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$user</span><span style="color:#a9a9a9;">.</span>Name <span style="color:#a9a9a9;">=</span><span style="color:#8b0000;">"JakeRobinson"</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$user</span><span style="color:#a9a9a9;">.</span>Password <span style="color:#a9a9a9;">= </span><span style="color:#8b0000;">"myPassword"</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$user</span><span style="color:#a9a9a9;">.</span>Role <span style="color:#a9a9a9;">= </span><span style="color:#ff4500;">$role</span><span style="color:#a9a9a9;">.</span>href</p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$user</span><span style="color:#a9a9a9;">.</span>IsEnabled <span style="color:#a9a9a9;">= </span><span style="color:#ff4500;">$true </span></p>
+
+</div>
+and finally, we push the user object to our Org:
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$org</span><span style="color:#a9a9a9;">.</span>ExtensionData<span style="color:#a9a9a9;">.</span>createUser(<span style="color:#ff4500;">$user</span>)</p>
+
+</div>
+So that's it! Probably 10 lines of code and we have a new user. The secret is really in the .extensiondata of the objects like $org.

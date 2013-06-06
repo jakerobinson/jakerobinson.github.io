@@ -1,0 +1,82 @@
+---
+layout: post
+title: Setting Default VDSwitch security for vCloud with PowerCLI
+tags:
+- dvPortgroups
+- forgedtransmits
+- PowerCLI
+- promiscuous
+- security
+- vCloud
+- vdportgroup
+- vmware
+- vSphere
+status: publish
+type: post
+published: true
+meta:
+  _oembed_e81db1249b4d405f03fa660519f43b92: ! '{{unknown}}'
+  _wpas_mess: ! 'Setting Default VDSwitch security for #vCloud with #PowerCLI'
+  _oembed_bf86348ed769c525f7f38461bd5191b7: ! '{{unknown}}'
+  publicize_reach: a:2:{s:7:"twitter";a:1:{i:209084;i:856;}s:2:"wp";a:1:{i:0;i:17;}}
+  _wpas_skip_209084: '1'
+  _oembed_78d2c278df8757d89596bcbaa5418530: ! '{{unknown}}'
+  _oembed_17770d5861142fac30f7476f988e9063: ! '{{unknown}}'
+  publicize_twitter_user: jakerobinson
+  _wpas_done_209084: '1'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:14061017;b:1;}}
+  _oembed_11ab174c89800844cebf85a6ddf088be: ! '{{unknown}}'
+  _oembed_8bf513c848613f2908632fe76e1a082c: ! '{{unknown}}'
+  _oembed_de6e92301f59153810736170721bbea5: ! '{{unknown}}'
+  tagazine-media: a:7:{s:7:"primary";s:0:"";s:6:"images";a:0:{}s:6:"videos";a:0:{}s:11:"image_count";i:0;s:6:"author";s:7:"9088041";s:7:"blog_id";s:8:"18937350";s:9:"mod_stamp";s:19:"2013-03-14
+    19:30:24";}
+  _oembed_6cf7aeb4816bf45872a8c45061c383ee: ! '{{unknown}}'
+  _oembed_c1f4ac44e2676bf59e84aaba6367d522: ! '{{unknown}}'
+  _oembed_cfdc90a02ebed811bef4a46367beeff6: ! '{{unknown}}'
+  _oembed_833a3a7ec014f68657e25ed3d6cdaf02: ! '{{unknown}}'
+  _oembed_1b65fc880264bb4f6e829d00fee092dc: ! '{{unknown}}'
+  _oembed_88cf3d4a17fa5b9c2d6b254fd451e597: ! '{{unknown}}'
+  _oembed_4f595f07d3c6e31a1e270709d26bc435: ! '{{unknown}}'
+  _oembed_40cee69c7bec1ba8e6f3cc777a7341b6: ! '{{unknown}}'
+---
+Working as a public <a href="http://bluelock.com" target="_blank">vCloud provider</a> periodically gives me the opportunity to help clients that are running their own private vCloud. It's a great side benefit to working with an experienced public vCloud provider in case you need some advanced help, or custom code/scripting!
+
+In this case, my client needed to set <strong>default</strong> security permissions for all new VDPortgroups that were <strong>created by vCloud Director</strong>. This is different than setting security on a single portgroup. This sets the <strong>defaults for ALL portgroups</strong> created <strong>after</strong> the setting change! This is very handy when the network creation is out of our hands. :D
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;">############################################</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;"># Configuration Settings                   #</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;">############################################</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$switchName</span><span style="color:#a9a9a9;">=</span><span style="color:#8b0000;">"dvSwitch"</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$promiscuous</span><span style="color:#a9a9a9;">=</span><span style="color:#ff4500;">$true</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$forgedTransmits</span><span style="color:#a9a9a9;">=</span><span style="color:#ff4500;">$false</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$macChanges</span><span style="color:#a9a9a9;">=</span><span style="color:#ff4500;">$false</span></p>
+&nbsp;
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;">###################################################</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;"># Shouldn't need to edit anything below this line #</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;">###################################################</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$dvSwitch </span><span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">Get-VDSwitch </span><span style="color:#ff4500;">$switchname</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec </span><span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.Vim.VMwareDVSConfigSpec</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec</span><span style="color:#a9a9a9;">.</span>configVersion <span style="color:#a9a9a9;">= </span><span style="color:#ff4500;">$dvswitch</span><span style="color:#a9a9a9;">.</span>ExtensionData<span style="color:#a9a9a9;">.</span>Config<span style="color:#a9a9a9;">.</span>ConfigVersion</p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec</span><span style="color:#a9a9a9;">.</span>DefaultPortConfig <span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.Vim.VMwareDVSPortSetting</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec</span><span style="color:#a9a9a9;">.</span>DefaultPortConfig<span style="color:#a9a9a9;">.</span>SecurityPolicy <span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.Vim.DVSSecurityPolicy</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec</span><span style="color:#a9a9a9;">.</span>DefaultPortConfig<span style="color:#a9a9a9;">.</span>SecurityPolicy<span style="color:#a9a9a9;">.</span>AllowPromiscuous <span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.Vim.BoolPolicy</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec</span><span style="color:#a9a9a9;">.</span>DefaultPortConfig<span style="color:#a9a9a9;">.</span>SecurityPolicy<span style="color:#a9a9a9;">.</span>AllowPromiscuous<span style="color:#a9a9a9;">.</span>Value <span style="color:#a9a9a9;">= </span><span style="color:#ff4500;">$promiscuous</span></p>
+&nbsp;
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec</span><span style="color:#a9a9a9;">.</span>DefaultPortConfig<span style="color:#a9a9a9;">.</span>SecurityPolicy<span style="color:#a9a9a9;">.</span>MacChanges <span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object</span><span style="color:#8a2be2;">VMware.Vim.BoolPolicy</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec</span><span style="color:#a9a9a9;">.</span>DefaultPortConfig<span style="color:#a9a9a9;">.</span>SecurityPolicy<span style="color:#a9a9a9;">.</span>MacChanges<span style="color:#a9a9a9;">.</span>Value <span style="color:#a9a9a9;">= </span><span style="color:#ff4500;">$macChanges</span></p>
+&nbsp;
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec</span><span style="color:#a9a9a9;">.</span>DefaultPortConfig<span style="color:#a9a9a9;">.</span>SecurityPolicy<span style="color:#a9a9a9;">.</span>ForgedTransmits <span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.Vim.BoolPolicy</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$spec</span><span style="color:#a9a9a9;">.</span>DefaultPortConfig<span style="color:#a9a9a9;">.</span>SecurityPolicy<span style="color:#a9a9a9;">.</span>ForgedTransmits<span style="color:#a9a9a9;">.</span>Value <span style="color:#a9a9a9;">= </span><span style="color:#ff4500;">$forgedTransmits</span></p>
+&nbsp;
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$dvswitch</span><span style="color:#a9a9a9;">.</span>ExtensionData<span style="color:#a9a9a9;">.</span>ReconfigureDvs_Task(<span style="color:#ff4500;">$spec</span>)</p>
+
+</div>
+I've written about getting around the missing dvPortgroup inheritance in the past, and there are also a couple good posts from Luc Dekens and Alan Renouf:
+
+http://geekafterfive.com/2011/04/04/dvportgroup-inheritance/
+
+http://www.lucd.info/2009/10/12/dvswitch-scripting-part-2-dvportgroup/
+
+http://blogs.vmware.com/vipowershell/2011/11/vsphere-distributed-switch-powercli-cmdlets.html
+
+Last but not least, special thanks to <a href="https://twitter.com/lamw" target="_blank">William Lam</a> for pointing me to the right spot in the API. :)

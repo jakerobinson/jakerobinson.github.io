@@ -1,0 +1,74 @@
+---
+layout: post
+title: dvPortgroup Inheritance
+tags:
+- dvPortgroups
+- PowerCLI
+- vCloud
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'dvPortgroup Inheritance: http://wp.me/p1hst8-g'
+  _wpas_done_twitter: '1'
+---
+This is a little Johnny-come-lately, but since I recently ran into this issue dealing with vCloud Director, I thought I would share my solution.
+
+<a title="Duncan's post" href="http://www.yellow-bricks.com/2010/08/02/changing-your-dvportgroup-settings-need-your-input/" target="_blank">Duncan's post</a> from August 2010 talks about the missing default settings for portgroup inheritance in the dvSwitches. Even though it is missing in the vSphere client, the default settings still exist, and can be set in the API.
+
+The original problem was that every new dvPortgroup does not have the correct settings for the environment, so you have to go in and manually set them AFTER the dvPortgroup is created. vCloud Director compounds the issue because users can create dvPortgroups, but don't have access to change the settings (e.g. failover, security).
+
+My temporary solution to the problem was to create a "trolling" script to look for dvPortgroups that were set up incorrectly. The script ran as a scheduled task every 10 minutes. It worked great, but this was a big band-aid that I really didn't like.
+
+I decided over the weekend to dig deeper into the dvSwitch object in the API, and sure enough, there was the <a title="defaultPortConfig" href="http://www.vmware.com/support/developer/vc-sdk/visdk41pubs/ApiReference/vim.DistributedVirtualSwitch.ConfigSpec.html" target="_blank">defaultPortConfig</a>!
+
+So, using the <a href="http://www.vmware.com/support/developer/vc-sdk/visdk41pubs/ApiReference/vim.DistributedVirtualSwitch.html#reconfigure" target="_blank">ReconfigureDvs_Task</a>, I wrote the following PowerCLI script:
+
+[sourcecode language="powershell" wraplines="false"]
+
+#Get the dvSwitch I want to edit
+$dvswitch = Get-VirtualSwitch name dvSwitch -distributed | Get-View
+
+#create the spec, note the object type
+$spec = New-Object VMware.Vim.DVSConfigSpec
+$spec.configVersion = $dvswitch.Config.ConfigVersion
+$spec.defaultPortConfig = New-Object VMware.Vim.VMwareDVSPortSetting
+$spec.defaultPortConfig.uplinkTeamingPolicy = New-Object VMware.Vim.VmwareUplinkPortTeamingPolicy
+
+#policy
+$spec.defaultPortConfig.uplinkTeamingPolicy.policy = New-Object VMware.Vim.StringPolicy
+$spec.defaultPortConfig.uplinkTeamingPolicy.policy.inherited = $false
+$spec.defaultPortConfig.uplinkTeamingPolicy.policy.value = &quot;failover_explicit&quot;
+
+#notify switches
+$spec.defaultPortConfig.uplinkTeamingPolicy.notifySwitches = New-Object VMware.Vim.BoolPolicy
+$spec.defaultPortConfig.uplinkTeamingPolicy.notifySwitches.inherited = $false
+$spec.defaultPortConfig.uplinkTeamingPolicy.notifySwitches.value = $true
+
+#rolling order
+$spec.defaultPortConfig.uplinkTeamingPolicy.rollingOrder = New-Object VMware.Vim.BoolPolicy
+$spec.defaultPortConfig.uplinkTeamingPolicy.rollingOrder.inherited = $false
+$spec.defaultPortConfig.uplinkTeamingPolicy.rollingOrder.value = $false
+
+#failure criteria
+$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria = New-Object VMware.Vim.DVSFailureCriteria
+$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria.inherited = $false
+$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria.checkBeacon = New-Object VMware.Vim.BoolPolicy
+$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria.checkBeacon.inherited = $false
+$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria.checkBeacon.value = $true
+
+#uplink port order
+$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder = New-Object VMware.Vim.VMwareUplinkPortOrderPolicy
+$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.inherited = $false
+$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort = New-Object System.String[] (2)
+$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort[0] = &quot;dvUplink1&quot;
+$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort[1] = &quot;dvUplink3&quot;
+$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort = New-Object System.String[] (2)
+$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[0] = &quot;dvUplink2&quot;
+$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[1] = &quot;dvUplink4&quot;
+
+#push the reconfig
+$dvswitch.ReconfigureDVS_Task($spec)
+[/sourcecode]
+
+(Note: Your failover settings may be very different. This script is just an example. See the <a href="http://www.vmware.com/support/developer/vc-sdk/visdk41pubs/ApiReference/vim.dvs.VmwareDistributedVirtualSwitch.VmwarePortConfigPolicy.html" target="_blank">VMwareDVSPortSetting</a> object type for more information...)

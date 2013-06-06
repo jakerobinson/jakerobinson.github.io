@@ -1,0 +1,63 @@
+---
+layout: post
+title: Sharing vApps in vCloud with PowerCLI
+tags:
+- controlaccess
+- PowerCLI
+- sharing
+- vApp
+- vCloud
+- vCloud API
+- vCloud Director
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'Sharing vApps in #vCloud with #PowerCLI'
+  _wpas_done_twitter: '1'
+---
+vCloud Director gives Organization users some granular control over what level of access users have to vApps, which can be controlled through the vCloud API and PowerCLI.
+
+The following code grabs a vApp's current access settings, and allows a user to modify the vApp.
+
+[sourcecode language="Powershell"]
+
+# Get our required Objects
+$vapp = Get-CIVApp &quot;My vApp&quot;
+$user = Get-CIUser &quot;UserToBeAdded&quot;
+
+# Access Level can be one of: ReadOnly,Change,FullControl
+$accessLevel = &quot;Change&quot;
+
+# Get current access policy from vApp
+$access = $vapp.ExtensionData.GetControlAccess()
+
+if (!$access.AccessSettings)
+{
+ $access.AccessSettings = New-Object VMware.VimAutomation.Cloud.Views.AccessSettings
+}
+
+
+# New Access object
+$newAccess = new-object VMware.VimAutomation.Cloud.Views.AccessSetting
+$newAccess.Subject = New-Object VMware.VimAutomation.Cloud.Views.Reference
+
+# Set our access level
+$newAccess.AccessLevel = $accessLevel
+
+# Insert user href
+$newAccess.Subject.Href = $user.ExtensionData.Href
+$newAccess.Subject.Type = &quot;application/vnd.vmware.admin.user+xml&quot;
+
+# Add new access to vApp access settings object
+$access.AccessSettings.AccessSetting += $newAccess
+
+#Send new Access config
+$vapp.ExtensionData.ControlAccess($access)
+
+[/sourcecode]
+
+<a href="http://geekafterfive.files.wordpress.com/2012/06/snag-0148.png"><img class="alignnone size-full wp-image-654" title="vCloud vApp Sharing" src="http://geekafterfive.files.wordpress.com/2012/06/snag-0148.png" alt="" width="490" height="346" /></a>
+
+You can also control the default access policy, as well as the level using: $access.IsSharedToEveryone and $access.EveryoneAccessLevel !!!

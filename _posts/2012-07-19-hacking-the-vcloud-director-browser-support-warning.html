@@ -1,0 +1,121 @@
+---
+layout: post
+title: Hacking the vCloud Director Browser Support Warning
+tags:
+- browser
+- chrome
+- hack
+- HTML
+- javascript
+- powershell
+- vCloud
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post: Hacking the #vCloud Director Browser Support Warning'
+  _wpas_done_twitter: '1'
+---
+&nbsp;
+
+&nbsp;
+
+<a href="http://geekafterfive.files.wordpress.com/2012/07/snag-0155.png"><img class="alignnone size-full wp-image-674" title="Warning, Jake Robinson!" src="http://geekafterfive.files.wordpress.com/2012/07/snag-0155.png" alt="" width="1027" height="65" /></a>
+
+I'm a Chrome user and it's particularly annoying to get the "this browser is not supported" message any time I load the vCloud Director URL, or my session expires and I have to re-login. I try to spend most of my time in PowerCLI, but sometimes I need to make a minor tweak, or open the remote console of a VM.
+
+I understand that Chrome is not a supported browser, which is only because of the remote console, as far as I can tell. Everything else works great in Chrome!
+
+So what is an unsupported browser user to do? HACK!
+
+I came up with this idea on accident, when I was playing with the Powershell v3 Invoke-RestMethod cmdlet.
+
+Here's what I ran:
+
+[sourcecode language="powershell"]
+
+Invoke-RestMethod &quot;https://vcloud.example.com/cloud/org/jake&quot; | Out-File C:\users\jake\desktop\vcloudindex.html -encoding UTF8
+
+[/sourcecode]
+
+This dumps the HTML from the URL just like wget in Linux.
+
+After that, I started changing out all of the relative HTML links to absolutes. In the following html, I changed the first one to show you an example.
+
+[sourcecode language="html" wraplines="false"]
+
+css/main.css&quot; type=&quot;text/css&quot; rel=&quot;stylesheet&quot; /&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;support/&lt;span class=&quot;&gt;// &lt;![CDATA[
+javascript&lt;/span&gt;/jquery/jquery-1.3.2.min.js&quot; type=&quot;text/javascript&quot;&gt;
+// ]]&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;support/&lt;span class=&quot;&gt;// &lt;![CDATA[
+javascript&lt;/span&gt;/upload.js&quot; type=&quot;text/javascript&quot;&gt;
+// ]]&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;support/&lt;span class=&quot;&gt;// &lt;![CDATA[
+javascript&lt;/span&gt;/swfobject.js&quot; type=&quot;text/javascript&quot;&gt;
+// ]]&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;support/&lt;span class=&quot;&gt;// &lt;![CDATA[
+javascript&lt;/span&gt;/swfaddress.js&quot; type=&quot;text/javascript&quot;&gt;
+// ]]&gt;&lt;/script&gt;
+ &lt;script src=&quot;support/javascript/associative-array.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+ &lt;script src=&quot;support/javascript/VMRCConsoleController.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+ &lt;script src=&quot;support/javascript/remoteaccess.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+
+[/sourcecode]
+
+After that, I started running into cookie errors, and apparently Chrome does not load cookies for local pages by default. You can fix this by loading Chrome with --enable-file-cookies, but that seemed like a chore. I simply uploaded the file to my public dropbox folder and got the URL for the file.
+
+At that point, I was accessing the file over the internet, but the flash was not loading. After a bit of investigation, I discovered this line:
+
+[sourcecode language="javascript"]
+
+{  wmode: &quot;opaque&quot;, allowScriptAccess: &quot;sameDomain&quot; },
+
+[/sourcecode]
+
+A quick google search revealed I could change "sameDomain" to "always." I made the change and reloaded the page. Flash worked and I could log in!!!
+
+So now I could focus my attention on that browser error. I did a find for the text of the error, and backtracked it to this function:
+
+[sourcecode language="javascript"]
+
+function onPageLoad() {
+ if (isSupportedBrowser()) {
+ initializeFlash();
+ } else {
+ $(&quot;#browserWarning&quot;).show();
+ $(&quot;#flashWarning&quot;).hide();
+ $(&quot;#cookieWarning&quot;).hide();
+ }
+ }
+
+[/sourcecode]
+
+Easy fix. I simply removed the logic of the onPageLoad() function to this:
+
+[sourcecode language="javascript"]
+
+function onPageLoad() {
+ initializeFlash();
+ }
+
+[/sourcecode]
+
+I reloaded the page, anxious to see if that fixed it....SUCCESS!
+
+I browsed around a bit to see if there was anything that didn't work, and it appears the only thing is right clicking objects. The work around for that is simply clicking the gear icon to bring up the actions for a particular object, but I am sure there is an HTML or javascript fix for that as well.
+
+From a security standpoint, I could see someone constructing a man-in-the-middle attack of sorts to gain credentials, but they'd have to work at it. Always make sure the URL you are connected to is correct, and the SSL cert is for your domain. Bookmarking the link can also be a method to make sure you are not going to the wrong URL.
+
+<a href="http://geekafterfive.files.wordpress.com/2012/07/snag-0154.png"><img class="alignnone size-full wp-image-671" title="Check your six." src="http://geekafterfive.files.wordpress.com/2012/07/snag-0154.png" alt="" width="396" height="410" /></a>
+
+&nbsp;
+
+As a final note, <strong><span style="color:#ff0000;">This does NOT add VMware remote console support to Chrome</span></strong>. The VMRC plugin is currently only for Firefox and IE. The usefulness of this hack is somewhat limited, as it only removes the browser warnings.
+
+Enjoy!
+
+&nbsp;
+
+&nbsp;

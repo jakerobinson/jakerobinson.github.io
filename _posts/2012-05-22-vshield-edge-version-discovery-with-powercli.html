@@ -1,0 +1,48 @@
+---
+layout: post
+title: vShield Edge Version Discovery with PowerCLI
+tags:
+- PowerCLI
+- upgrade
+- vCloud
+- vmware
+- vShield
+- vshield
+- vsphere
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post: "#vShield Edge Version Discovery with #PowerCLI" #vCloud
+    #vSphere'
+  publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"204936334941491203";}}}
+  _wpas_done_twitter: '1'
+---
+When upgrading vShield Manager, your vShield Edge devices will not be upgraded until you restart them. If you are in a situation where you need to do manual scheduled upgrades, this script will help you keep track of all the old versions running in your environment.
+
+Note: This is a vSphere PowerCLI script should work with both vCloud Director or regular vShield installs.
+
+[sourcecode language="powershell"]
+
+$report = @()
+$VSEs = Get-View -ViewType virtualmachine -Filter @{&quot;name&quot;=&quot;vse&quot;}
+
+foreach ($vSE in $vSEs)
+{
+
+$vSEObject = New-Object PSObject
+ Add-Member -MemberType NoteProperty -Name &quot;Name&quot; -Value $VSE.name -InputObject $vSEObject
+ Add-Member -MemberType NoteProperty -Name &quot;Version&quot; -Value $VSE.config.vappconfig.product[0].version -InputObject $vSEObject
+ Add-Member -MemberType NoteProperty -Name &quot;Network0&quot; -Value (Get-View -id $VSE.network[0].tostring()).name -InputObject $vSEObject
+ Add-Member -MemberType NoteProperty -Name &quot;Network1&quot; -Value (Get-View -id $VSE.network[1].tostring()).name -InputObject $vSEObject
+
+$report += $vSEObject
+}
+
+$highVer = ($report | Sort-Object -Property version -Descending)[0].version
+$oldvSEs = $report | where {$_.version -ne $highVer}
+$oldvSEs | Export-Csv $HOME\Desktop\oldvSEs.csv -NoTypeInformation
+
+[/sourcecode]
+
+&nbsp;

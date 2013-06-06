@@ -1,0 +1,81 @@
+---
+layout: post
+title: vCloud 5.1 API Support in PowerCLI 5.1 R2
+tags:
+- '5.1'
+- alan renouf
+- edge gateway
+- PowerCLI
+- Powershell
+- snapshots
+- vcd
+- vCloud
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post! #vCloud 5.1 API Support in #PowerCLI 5.1 R2'
+  publicize_twitter_user: jakerobinson
+  _wpas_done_209084: '1'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:14061017;b:1;}}
+---
+Quite a few people have been asking about vCloud 5.1 feature support in PowerCLI. Guess what: It's <a href="http://vmware.com/go/powercli" target="_blank">here</a>! PowerCLI 5.1 R2 has officially dropped, and the new vCloud 5.1 features are built in!
+
+You will find all the new 5.1 API properties and methods in the .extensiondata of objects such as a VM returned by Get-CIVM. Snapshots come to mind as a frequent request. Here's how to find them:
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vm</span><span style="color:#a9a9a9;">=</span><span style="color:#0000ff;">Get-CIVM </span><span style="color:#8b0000;">"MyVM"</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vm</span><span style="color:#a9a9a9;">.</span>ExtensionData <span style="color:#a9a9a9;">| </span><span style="color:#0000ff;">Get-Member</span></p>
+
+</div>
+The .extensiondata property is really the same object as you would get from the Get-CIView cmdlet.
+
+So, lets say we wanted to find out what new fancy 5.1 VM snapshot properties and methods are available to us:
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vm</span><span style="color:#a9a9a9;">=</span><span style="color:#0000ff;">Get-CIVM </span><span style="color:#8b0000;">"MyVM"</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vm</span><span style="color:#a9a9a9;">.</span>ExtensionData <span style="color:#a9a9a9;">| </span><span style="color:#0000ff;">Get-Member</span><span style="color:#8a2be2;">*snapshot*</span></p>
+
+</div>
+<p style="text-align:center;"><a href="http://geekafterfive.files.wordpress.com/2013/02/snag-0207.png"><img class="size-full wp-image-772 aligncenter" alt="PowerCLI snapshots" src="http://geekafterfive.files.wordpress.com/2013/02/snag-0207.png" width="490" height="158" /></a></p>
+From this,  we see that we now have the ability to automate the creation, removal and revert of snapshots in vCloud Director 5.1!
+
+Creating, Reporting on, and Removing snapshots is now easy!
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;"># Create Snapshot (Snapshot memory false, quiece true, snapshot name, description)</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vm</span><span style="color:#a9a9a9;">.</span>extensiondata<span style="color:#a9a9a9;">.</span>CreateSnapshot(<span style="color:#ff4500;">$false</span><span style="color:#a9a9a9;">,</span><span style="color:#ff4500;">$true</span><span style="color:#a9a9a9;">,</span><span style="color:#8b0000;">"Snapshot"</span><span style="color:#a9a9a9;">,</span><span style="color:#8b0000;">"Description"</span>)
+
+</p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;"># Get VM snapshot</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vm</span><span style="color:#a9a9a9;">.</span>ExtensionData<span style="color:#a9a9a9;">.</span>GetSnapshotSection()<span style="color:#a9a9a9;">.</span>snapshot
+
+</p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;"># Remove Snapshots</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vm</span><span style="color:#a9a9a9;">.</span>ExtensionData<span style="color:#a9a9a9;">.</span>RemoveAllSnapshots()</p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"></p>
+<p style="font-family:'Lucida Console';margin:0;background-color:#ffffff;text-align:center;"><a href="http://geekafterfive.files.wordpress.com/2013/02/snag-0215.png"><img class="size-full wp-image-776 aligncenter" alt="SNAG-0215" src="http://geekafterfive.files.wordpress.com/2013/02/snag-0215.png" width="490" height="111" /></a></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"></p>
+
+</div>
+Let's check out another one. Edge Gateways are new in vCloud Director 5.1. How do we find those without any new cmdlets? Search-Cloud!
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#0000ff;">Search-Cloud </span><span style="color:#000080;">-QueryType </span><span style="color:#8a2be2;">EdgeGateway </span><span style="color:#a9a9a9;">| </span><span style="color:#0000ff;">Get-CIView </span></p>
+
+</div>
+Search-Cloud returns a search object, and from this we can get the .NET object with all the properties and methods.
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$edge </span><span style="color:#a9a9a9;">| </span><span style="color:#0000ff;">Get-Member </span></p>
+
+</div>
+<a href="http://geekafterfive.files.wordpress.com/2013/02/snag-0210.png"><img class="aligncenter size-full wp-image-774" alt="Edge Gateway in PowerCLI" src="http://geekafterfive.files.wordpress.com/2013/02/snag-0210.png" width="490" height="275" /></a>
+
+Note that we don't have to use the .extensiondata, because we used Get-CIView to directly get the .NET object.
+
+Let's check out the .configuration!
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$edge</span><span style="color:#a9a9a9;">.</span>configuration</p>
+
+</div>
+<p style="text-align:center;"><a href="http://geekafterfive.files.wordpress.com/2013/02/snag-0212.png"><img class="size-full wp-image-775 aligncenter" alt="PowerCLI Edge Gateway Configuration" src="http://geekafterfive.files.wordpress.com/2013/02/snag-0212.png" width="490" height="110" /></a></p>
+Both the vCloud Admin and Tenant PowerCLI snap-ins have been updated, so if your cloud provider is running on 5.1, enjoy the new features!
+
+Now, this is certainly not all <strong>PowerCLI 5.1 R2</strong> has to offer.  <strong>Powershell 3 support</strong> as well as an <strong>official VDS snap-in</strong> are also available! You can read more about these updates on the <a href="http://blogs.vmware.com/vipowershell/2013/02/powercli-5-1-release-2-now-available.html" target="_blank">Official PowerCLI Blog!</a> For tons of <strong>VDS examples</strong>, See <a href="http://www.virtu-al.net/2013/02/11/powercli-5-1-r2-released/" target="_blank">Alan's post</a>!

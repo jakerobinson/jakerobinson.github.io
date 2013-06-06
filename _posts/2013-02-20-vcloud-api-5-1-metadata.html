@@ -1,0 +1,41 @@
+---
+layout: post
+title: vCloud API 5.1 Metadata
+tags:
+- Metadata
+- PowerCLI
+- vCloud
+- vcloud 5.1
+- vCloud API
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  publicize_reach: a:2:{s:7:"twitter";a:1:{i:209084;i:817;}s:2:"wp";a:1:{i:0;i:16;}}
+  _wpas_mess: ! 'New Post: #vCloud API 5.1 Metadata http://wp.me/p1hst8-cp #PowerCLI'
+  publicize_twitter_user: jakerobinson
+  _wpas_done_209084: '1'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:14061017;b:1;}}
+  _wpas_skip_209084: '1'
+---
+There has been very good coverage and code samples for working with Metadata in vCloud Director 1.5 (See posts from <a href="http://blogs.vmware.com/vsphere/2012/03/creating-custom-metadata-using-the-vcloud-api.html" target="_blank">William</a>, <a href="http://blogs.vmware.com/vipowershell/2012/03/working-with-vcloud-metadata-in-powercli.html" target="_blank">Alan</a>, and <a href="http://velemental.com/2012/03/29/managing-metadata-in-vcd-with-powercli/" target="_blank">Clinton</a>), so this will simply be an update post for Metadata in vCloud Director 5.1.
+<h3><span style="color:#3366ff;">What's different?</span></h3>
+<ol>
+	<li><a href="http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.api.reference.doc_51/doc/types/MetadataTypedValue.html" target="_blank">Typed Values</a> - Metadata must now be put into a certain type. No more throwing random junk into a single metadata entry. :D</li>
+	<li><a href="http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.api.reference.doc_51/doc/types/MetadataDomainTagType.html" target="_blank">Domain and Visibility</a> - Providers now have the ability to provide System metadata entries on objects, which is not editable by users. Providers can additionally make the metadata private, meaning the users cannot see the System metadata on the object at all.</li>
+	<li><a href="http://pubs.vmware.com/vcd-51/topic/com.vmware.vcloud.api.reference.doc_51/doc/types/MetadataType.html" target="_blank">Objects</a> - Metadata can now be added to new vCloud Director 5.1 objects, including disks and storage profiles. Additionally, I believe that because OrgVDC networks are now user manageable, vCloud users can add their own metadata to networks.</li>
+</ol>
+For more instruction on Metadata in the vCloud API, read <a href="http://pubs.vmware.com/vcd-51/index.jsp?topic=%2Fcom.vmware.vcloud.api.doc_51%2FGUID-8D8C68F0-AC63-4134-A57E-326E510FC690.html" target="_blank">"Working with Object Metadata"</a> in the vCloud Programming Guide.
+<h3><span style="color:#3366ff;">PowerCLI 5.1 R2 example:</span></h3>
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vapp </span><span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">Get-CIVapp </span><span style="color:#8b0000;">"MyVApp"</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata </span><span style="color:#a9a9a9;">= </span><span style="color:#ff4500;">$vapp</span><span style="color:#a9a9a9;">.</span>extensiondata<span style="color:#a9a9a9;">.</span>GetMetadata()</p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata</span><span style="color:#a9a9a9;">.</span>MetadataEntry <span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.VimAutomation.Cloud.Views.MetadataEntry</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;"># I don't have any other metadata, so index is [0].</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata</span><span style="color:#a9a9a9;">.</span>MetadataEntry<span style="color:#a9a9a9;">[</span><span style="color:#800080;">0</span><span style="color:#a9a9a9;">].</span>Key <span style="color:#a9a9a9;">= </span><span style="color:#8b0000;">"Jake"</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata</span><span style="color:#a9a9a9;">.</span>MetadataEntry<span style="color:#a9a9a9;">[</span><span style="color:#800080;">0</span><span style="color:#a9a9a9;">].</span>TypedValue <span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.VimAutomation.Cloud.Views.MetadataStringValue</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata</span><span style="color:#a9a9a9;">.</span>MetadataEntry<span style="color:#a9a9a9;">[</span><span style="color:#800080;">0</span><span style="color:#a9a9a9;">].</span>TypedValue<span style="color:#a9a9a9;">.</span>Value <span style="color:#a9a9a9;">= </span><span style="color:#8b0000;">"vCloudNerd"</span></p>
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vapp</span><span style="color:#a9a9a9;">.</span>ExtensionData<span style="color:#a9a9a9;">.</span>CreateMetadata(<span style="color:#ff4500;">$metadata</span>)</p>
+
+</div>

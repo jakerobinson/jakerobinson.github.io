@@ -1,0 +1,25 @@
+---
+layout: page
+title: vCloud
+tags: []
+status: publish
+type: page
+published: true
+meta:
+  _wp_page_template: default
+---
+<h2><span style="color:#3366ff;">vCloud PowerCLI Script and One-Liner Reference</span></h2>
+Updated regularly! Check back often!
+<h3><span style="text-decoration:underline;">Get vCloud Org Hierarchy Tree</span></h3>
+This one-liner prints the hierarchy of a vCloud Organization all the way down to the VM level (Org&gt;VDC&gt;VApp&gt;VM)
+<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
+<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#0000ff;">Get-Org</span><span style="color:#a9a9a9;">|</span><span style="color:#0000ff;">%</span>{<span style="color:#ff4500;">$_</span><span style="color:#a9a9a9;">.</span>name;<span style="color:#ff4500;">$_</span><span style="color:#a9a9a9;">|</span><span style="color:#0000ff;">Get-OrgVdc</span><span style="color:#a9a9a9;">|</span><span style="color:#0000ff;">%</span>{<span style="color:#8b0000;">"`t"</span><span style="color:#a9a9a9;">+</span><span style="color:#ff4500;">$_</span><span style="color:#a9a9a9;">.</span>name;<span style="color:#ff4500;">$_</span><span style="color:#a9a9a9;">|</span><span style="color:#0000ff;">Get-CIVApp</span><span style="color:#a9a9a9;">|</span><span style="color:#0000ff;">%</span>{<span style="color:#8b0000;">"`t`t"</span><span style="color:#a9a9a9;">+</span><span style="color:#ff4500;">$_</span><span style="color:#a9a9a9;">.</span>name;<span style="color:#ff4500;">$_</span><span style="color:#a9a9a9;">|</span><span style="color:#0000ff;">Get-CIVM</span><span style="color:#a9a9a9;">|</span><span style="color:#0000ff;">%</span>{<span style="color:#8b0000;">"`t`t`t"</span><span style="color:#a9a9a9;">+</span><span style="color:#ff4500;">$_</span><span style="color:#a9a9a9;">.</span>name}}}}</p>
+
+</div>
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+.

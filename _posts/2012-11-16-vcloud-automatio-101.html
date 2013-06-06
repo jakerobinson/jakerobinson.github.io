@@ -1,0 +1,33 @@
+---
+layout: post
+title: vCloud Automation 101
+tags: []
+status: draft
+type: post
+published: false
+meta: {}
+---
+Agility. You need it, cloud has it. The idea that infrastructure is there when we need it is alone a killer benefit, but there's more... We see people talking about amazing features like auto-scaling, continuous integration, and auto-deployment that are revolutionizing the way IT and software development work. It seems Utopian and so far away that we don't know where to start.
+
+Let me help you start your journey.
+
+The vCloud API plays a key role in building custom experiences in the cloud. Knowing the vCloud API is a feeling of freedom, and opens up endless possibilities. You want to know how AWS got to where they are? APIs. Twitter? APIs.
+
+So how do we get started with the vCloud API? I have a great beginner lesson on the API my TrainSignal course: <a href="http://www.trainsignal.com/VMware-vCloud-Director-Organizations-Training.aspx" target="_blank">VMware vCloud Director Organizations</a>. It covers what the vCloud API is, and demonstrates how to make raw RESTful API calls. That being said, we want to start automating quickly and easily.
+
+There are a number of SDKs and toolkits that have vCloud API support. Here's a list of the ones I know, and if you know of any more, please leave me a comment and I'll add it to the list.
+
+<a href="http://communities.vmware.com/community/vmtn/developer/forums/vcloudsdkjava">vCloud Java SDK</a>
+<a href="http://communities.vmware.com/community/vmtn/developer/forums/vcloudsdkphp">vCloud PHP SDK</a>
+<a href="http://communities.vmware.com/community/vmtn/developer/forums/vcloudsdk-net">vCloud .NET SDK
+</a><a href="http://www.jclouds.org/" target="_blank">jClouds (Multi-Cloud Java)</a>
+<a href="http://fog.io" target="_blank">Fog (Multi-Cloud Ruby)</a>
+<a href="http://libcloud.apache.org/" target="_blank">LibCloud (Multi-Cloud Python)</a>
+
+No matter what language you prefer, the easiest way to get started automating in vCloud is with PowerCLI. VMware PowerCLI is a snap-in for Powershell, Microsoft's automation framework. Powershell's scripting language turns commands (called cmdlets) into simple a simple verb-noun format. For instance, If you want to get a list of your Virtual Machines running in your vCloud Organization, you simply type <strong>Get-CIVM</strong>. (CI stands for Cloud Infrastructure and is used to differentiate between getting VMs in other VMware products.)
+
+Enough introduction! Lets get started by downloading <a href="http://vmware.com/downloads/download.do?downloadGroup=PCLI51R1T" target="_blank">PowerCLI for vCloud Tenants</a>. There is another PowerCLI snap-in that has vSphere and provider level cmdlets that are not needed unless you use vSphere or are a vCloud provider.
+
+&nbsp;
+
+&nbsp;

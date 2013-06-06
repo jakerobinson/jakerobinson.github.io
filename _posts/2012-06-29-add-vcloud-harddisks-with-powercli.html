@@ -1,0 +1,116 @@
+---
+layout: post
+title: Add vCloud Harddisks with PowerCLI
+tags:
+- harddisk
+- ovf
+- PowerCLI
+- rest
+- vCloud
+- vCloud API
+- vm
+- vmdk
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post: Add #vCloud Harddisks with #PowerCLI (while the VM is still
+    powered ON!)'
+  _wpas_done_twitter: '1'
+---
+In <a title="vCloud API/GUI Throwdown: Part 2" href="http://geekafterfive.com/2012/02/24/vcloud-apigui-throwdown-part-2/">vCloud API/GUI Throwdown part 2</a>, I showed you how to modify VM disk sizes in vCloud Director while the VM is still powered on. However, we did *not* cover adding new disks to a VM.
+
+Adding new harddisks is a little tricky because of the implementation of the object in the SDK.. The conversion from XML to a .NET object is not an easy thing, especially with the vCloud API's intricate  nodes, elements, attributes, etc. Because of this, you can't create a representation of a harddisk as a .NET object. Trust me, I've tried.
+
+That being said, we're working with a REST API, and Powershell LOVES REST APIs. Using the <span style="color:#339966;">[System.Net.WebRequest]</span> class, we can talk HTTP just like any web browser. That means we can use the 4 HTTP methods used in REST APIs: GET, POST, PUT, DELETE.
+
+So, with a mix of PowerCLI and some Powershell .NET magic, I give you... <span style="color:#000080;">New-CIHarddisk</span>! I made this one an advanced function, so you can just pipe a vCloud VM to it, like so:
+
+<a href="http://geekafterfive.files.wordpress.com/2012/06/snag-0113.png"><img class="alignnone size-full wp-image-659" title="New-CIHarddisk" src="http://geekafterfive.files.wordpress.com/2012/06/snag-0113.png" alt="" width="490" height="59" /></a>
+
+*Note the harddisk size is in bytes.
+
+Here are a couple different ways to run the command:
+
+[sourcecode language="powershell"]
+# Passing VM via pipeline
+Get-CIVM &quot;MyVM&quot; | New-CIHarddisk -size 10240
+
+# Or just using a VM name
+New-CIHarddisk -vm &quot;MyVM&quot; -size 10240
+[/sourcecode]
+
+Here's what it looks like after you add more harddisks to a running VM...I may have had a little too much fun with this one:
+
+<a href="http://geekafterfive.files.wordpress.com/2012/06/snag-0114.png"><img class="alignnone size-full wp-image-660" title="Lots of harddisks!" src="http://geekafterfive.files.wordpress.com/2012/06/snag-0114.png" alt="" width="490" height="169" /></a>
+
+So enjoy, but be careful!
+
+[sourcecode language="powershell" wraplines="false"]
+
+function New-CIHarddisk
+{
+ [cmdletbinding()]
+ param
+ (
+ [Parameter (ParameterSetName=&quot;pipeline&quot;,ValueFromPipeline=$true,Mandatory=$true)]$vm,
+ [Parameter (Position=0, Mandatory=$true)]$size
+ )
+
+Process
+ {
+ # Get indexes to create unique IDs for our new disk.
+ if ($vm -is [System.String])
+ {
+ $vm = get-civm $vm
+ }
+ $vmHardware = $vm.ExtensionData.GetVirtualHardwareSection()
+ $scsiController = $vmHardware.item | where {$_.resourceType.value -eq &quot;6&quot;}
+ $highaddress = ($vmHardware.item | where {$_.resourcetype.value -eq &quot;17&quot;} | Sort-Object addressonParent)[-1].addressonParent.value
+ $addressOnParent = [int]$highaddress + 1
+ $highInstance = ($vmHardware.item | where {$_.resourcetype.value -eq &quot;17&quot;} | Sort-Object instanceID)[-1].instanceId.value
+ $instanceId = [int]$highInstance + 1
+ $highElement = ($vmHardware.item | where {$_.resourcetype.value -eq &quot;17&quot;} | Sort-Object elementName)[-1].elementName.value
+ $elementName = [int]$highElement.Split()[-1] + 1
+
+# We need to get the raw XML via vCloud API to add the new disk.
+ $hardwareContentType = &quot;application/vnd.vmware.vcloud.virtualHardwareSection+xml&quot;
+ $webclient = New-Object system.net.webclient
+ $webclient.Headers.Add(&quot;x-vcloud-authorization&quot;,$vmHardware.Client.SessionKey)
+ $webclient.Headers.Add(&quot;accept&quot;,$hardwareContentType)
+ [xml]$hardwareConfXML = $webclient.DownloadString($vmhardware.href)
+
+# Clone the XML node, assign our variables, and insert child into the XML
+ $newDisk = ($hardwareConfXML.VirtualHardwareSection.Item | where {$_.resourcetype -eq 17})[-1].clonenode(1)
+ $newDisk.AddressOnParent = &quot;$addressOnParent&quot;
+ $newDisk.InstanceId = &quot;$instanceId&quot;
+ $newDisk.elementName = &quot;Hard Disk $elementName&quot;
+ $newdisk.hostresource.capacity = &quot;$size&quot;
+ $newDisk.parent = &quot;$($scsiController.instanceID.value)&quot;
+ [void]$hardwareConfXML.VirtualHardwareSection.InsertAfter($newDisk,($hardwareConfXML.VirtualHardwareSection.Item | where {$_.resourcetype -eq 17})[-1])
+
+# PUT the data back through vCloud API
+ $request = [System.Net.WebRequest]::Create($vmHardware.href);
+ $request.Headers.Add(&quot;x-vCloud-authorization&quot;,$vmHardware.Client.SessionKey)
+ $request.Accept=&quot;application/vnd.vmware.vcloud.task+xml&quot;
+ $request.Method=&quot;PUT&quot;
+ $request.ContentType = $hardwareContentType
+ $postData = $hardwareConfXML.virtualhardwaresection.outerxml
+ $xmlString = $postData.replace(&quot;
+&quot;,&quot;&quot;) # adding strings to xml puts in silly newlines.
+ [byte[]]$xmlEnc = [System.Text.Encoding]::UTF8.GetBytes($xmlString)
+ $request.ContentLength = $xmlEnc.length
+ [System.IO.Stream]$requestStream = $request.GetRequestStream()
+ $requestStream.write($xmlEnc, 0, $xmlEnc.Length)
+ $requestStream.Close()
+ $response = $request.GetResponse()
+ $responseStream = $response.getResponseStream()
+ $streamReader = new-object System.IO.StreamReader($responseStream)
+ $result = $streamReader.ReadtoEnd()
+ $streamReader.close()
+ $response.close()
+ }
+}
+
+[/sourcecode]

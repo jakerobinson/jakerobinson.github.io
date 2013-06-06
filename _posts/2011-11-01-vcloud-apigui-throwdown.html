@@ -1,0 +1,43 @@
+---
+layout: post
+title: vCloud API/GUI Throwdown!
+tags:
+- vCloud
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_done_twitter: '1'
+---
+<img class="alignnone" title="By Wayne Short (Edited version of File:Boxing080905.jpg) [Public domain], via Wikimedia Commons" src="http://upload.wikimedia.org/wikipedia/commons/4/4f/Boxing080905_photoshop.jpg" alt="" width="582" height="360" />
+Laaaaaaadies and Gentlemen! Tonight's fight is between two heavyweights in vCloud Director, The GUI and the API!
+
+Alright boys, nothing below the belt! Fight! Ding Ding Ding!
+
+<strong>Round 1: Hot Cloning</strong>
+<span style="color:#ff0000;"><strong>GUI:</strong> Sorry, no hot cloning here. All grayed out, sorry.</span>
+<span style="color:#008000;"><strong>API:</strong> Heck yeah, I can hot-clone entire vApps! Bring it on!</span> <a href="http://www.vcoteam.info/learn-vco/vcloud-director-vapp-hot-clone.html" target="_blank">vCO example</a>
+<code>Copy or Move a vApp link in vCloud API: POST API‐URL/vdc/id/action/cloneVApp</code>
+
+<strong>Round 2: Change VM networks</strong>
+<span style="color:#ff0000;"><strong>GUI:</strong> Oh, I got this one. Here's how. Start by powering off...</span>
+<span style="color:#008000;"><strong>API:</strong> HA. Easy. I can even Add NICs while machines are running.</span>
+<code>Modify vApp Network Configuration in vCloud API: PUT API‐URL/vApp/vapp‐id/networkConfigSection</code>
+
+<strong>Round 3: Change disks</strong>
+<span style="color:#ff0000;"><strong>GUI:</strong> I'm getting beat up pretty bad here...</span>
+<span style="color:#008000;"><strong>API:</strong> Bahahaa. Expand disks and hot add disks on the fly? Yes. I. Can.</span>
+<code>Modify Virtual Disk Items of the Virtual Machine in vCloud API: PUT API‐URL/vApp/vm‐id/virtualHardwareSection/disks/</code>
+
+<strong>Bonus round: Snapshots</strong>
+<span style="color:#ff0000;"><strong>GUI:</strong> Ha. You're funny.</span>
+<span style="color:#ff9900;"><strong>API:</strong> Well, I uh...Can't. BUT, you can extend the vCloud API, which gives you the ability to write it in. I'd like to see you do that with the GUI!</span>
+
+The moral of the story is: <strong>Don't assume just because the GUI can't do it, that it's impossible!</strong>
+
+Also, It's obviously much easier to consume the GUI than the API, but the upcoming <a title="Coming Soon: VMware vCloud PowerCLI snapin!" href="http://geekafterfive.com/2011/09/06/vmware-vcloud-powercli-snapin/" target="_blank">PowerCLI snapin</a> should even the playing field. More to come!
+
+<strong><span style="color:#ff0000;">Update: <a title="vCloud API/GUI Throwdown: Part 2" href="http://geekafterfive.com/2012/02/24/vcloud-apigui-throwdown-part-2/">Part 2</a> of the vCloud/GUI Throwdown! Plenty of PowerCLI 5.0.1 examples!</span></strong>
+
+vCloud API page: <a href="http://communities.vmware.com/community/vmtn/developer/forums/vcloudapi" target="_blank">http://communities.vmware.com/community/vmtn/developer/forums/vcloudapi</a>

@@ -1,0 +1,38 @@
+---
+layout: post
+title: Import an OVF from your desktop to a vCloud Org Catalog
+tags:
+- import
+- Import-CIVappTemplate
+- ovf
+- PowerCLI
+- vCloud
+- vCloud Director
+- vcloud vapp template
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post: Import an OVF from your desktop to a #vCloud Org Catalog
+    #PowerCLI'
+  publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"198075192323481602";}}}
+  _wpas_done_twitter: '1'
+---
+Have you downloaded a really cool appliance in OVF and want to quickly upload it to your vCloud Director Org? The Web UI would be one way to do it, but I sometimes run into issues with the java uploader.
+
+Here's a simple PowerCLI method to get your OVF appliance from your desktop into your Org:
+
+[sourcecode language="powershell"]
+
+$ovfPath = &quot;C:\users\me\desktop\MyCoolAppliance.ovf&quot;
+
+$orgVdc = Get-OrgVdc &quot;My Org vDC&quot;
+
+$catalog = Get-Catalog &quot;My Catalog&quot;
+
+Import-CIVAppTemplate -SourcePath $ovfPath -OrgVdc $orgVdc -Catalog $catalog
+
+[/sourcecode]
+
+As a subjective observation, it seems to run a lot faster than the Java uploader, but pending a real speed test, it's just another way to upload an OVF into your catalog. :D

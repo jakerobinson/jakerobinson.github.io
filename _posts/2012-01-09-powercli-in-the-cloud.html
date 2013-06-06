@@ -1,0 +1,97 @@
+---
+layout: post
+title: PowerCLI in the Cloud
+tags:
+- Bluelock
+- Cloud computing
+- PowerCLI
+- Powershell
+- vCloud
+- vmware
+- Windows Powershell
+status: publish
+type: post
+published: true
+meta:
+  publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"156573540278218755";}}}
+  _wpas_done_twitter: '1'
+  tagazine-media: a:7:{s:7:"primary";s:64:"http://geekafterfive.files.wordpress.com/2012/01/powercli501.jpg";s:6:"images";a:2:{s:64:"http://geekafterfive.files.wordpress.com/2012/01/powercli501.jpg";a:6:{s:8:"file_url";s:64:"http://geekafterfive.files.wordpress.com/2012/01/powercli501.jpg";s:5:"width";s:3:"893";s:6:"height";s:3:"725";s:4:"type";s:5:"image";s:4:"area";s:6:"647425";s:9:"file_path";s:0:"";}s:63:"http://geekafterfive.files.wordpress.com/2012/01/snag-00001.png";a:6:{s:8:"file_url";s:63:"http://geekafterfive.files.wordpress.com/2012/01/snag-00001.png";s:5:"width";s:3:"960";s:6:"height";s:3:"285";s:4:"type";s:5:"image";s:4:"area";s:6:"273600";s:9:"file_path";s:0:"";}}s:6:"videos";a:0:{}s:11:"image_count";s:1:"2";s:6:"author";s:7:"9088041";s:7:"blog_id";s:8:"18937350";s:9:"mod_stamp";s:19:"2012-01-10
+    04:15:15";}
+---
+<a href="http://geekafterfive.files.wordpress.com/2012/01/powercli501.jpg"><img class="aligncenter size-full wp-image-207" title="powercli501" src="http://geekafterfive.files.wordpress.com/2012/01/powercli501.jpg" alt="" width="490" height="397" /></a>If you attended the PowerCLI sessions at VMWorld, you may remember the mention of a <a title="Coming Soon: VMware vCloud PowerCLI snapin!" href="http://geekafterfive.com/2011/09/06/vmware-vcloud-powercli-snapin/">vCloud Snapin</a> coming soon. This will be the first Powershell snapin allowing administration of your hybrid cloud environment. Exciting, huh?
+
+Well, prepare to get even more excited, because...
+<h3> <strong><a title="PowerCLI Home page" href="http://communities.vmware.com/community/vmtn/server/vsphere/automationtools/powercli" target="_blank">PowerCLI 5.01 is now available</a>, with a shiny new snapin for vCloud Director 1.5!</strong></h3>
+Check it out:
+
+[sourcecode language="text" highlight="4,10"]
+PS &gt; Get-PowerCLIVersion
+PowerCLI Version
+----------------
+ VMware vSphere PowerCLI 5.01
+---------------
+Snapin Versions
+---------------
+ VMware AutoDeploy PowerCLI Component 5.0
+ VMware ImageBuilder PowerCLI Component 5.0
+ VMware vCloud Director PowerCLI Component 1.5
+ VMware License PowerCLI Component 5.0
+ VMware vSphere PowerCLI Component 5.0
+[/sourcecode]
+
+&nbsp;
+
+[sourcecode highlight="7"]
+PS &gt; Get-PSSnapin vmware.vimautomation.cloud
+
+Name : vmware.vimautomation.cloud
+PSVersion : 2.0
+Description : This Windows Powershell snap-in contains This Windows Powershell for managing Cloud..
+
+[/sourcecode]
+
+Let's take a look at the cloud cmdlets we get in this release!
+
+[sourcecode language="powershell" highlight="5,6,7,8,9,10,11,12,13,15,16,17,18"]
+
+get-command -Module vmware.vimautomation.cloud | select name
+
+Name
+----
+Connect-CIServer
+Disconnect-CIServer
+Get-Catalog
+Get-CIRole
+Get-CIUser
+Get-CIVApp
+Get-CIVAppTemplate
+Get-CIView
+Get-CIVM
+Get-ExternalNetwork
+Get-Media
+Get-Org
+Get-OrgNetwork
+Get-OrgVdc
+Get-ProviderVdc
+Import-CIVApp
+Import-CIVAppTemplate
+
+[/sourcecode]
+
+There are cmdlets for both the vCloud provider admin, AND the vCloud Org admin included in this release, so whether you run vCloud Director internally, or use a public Cloud provider like <a href="http://bluelock.com" target="_blank">Bluelock</a>, this snapin is for you! For your convenience, I've highlighted the cmdlets in the list above that are available to both Org and Provider admins.
+
+So, let's give them a try in a hybrid environment, where I am connected to my local vSphere and a public vCloud Provider.
+
+To connect as an Org admin, I'll need my username, password, and Org.
+
+[sourcecode language="powershell"]Connect-CIServer -org MyOrg -User Jake -Password cloud[/sourcecode]
+
+I've connected to both my internal vSphere environment, and my public cloud provider. So doing a
+
+[code]Get-VM[/code]
+
+and then a Get-CIVM will list my VMs in both environments.
+<pre><a href="http://geekafterfive.files.wordpress.com/2012/01/snag-00001.png"><img class="alignleft size-full wp-image-194" title="SNAG-0000" src="http://geekafterfive.files.wordpress.com/2012/01/snag-00001.png" alt="" width="490" height="145" /></a></pre>
+You'll also may notice from the list that there are no Set-* or New-* cmdlets. Never fear though, because in the next post we'll take a look at making some changes to our vCloud VMs with Get-CIView and the vCloud .NET SDK.
+
+Why are you still reading this? <a title="PowerCLI 5.01 download" href="http://downloads.vmware.com/downloads/download.do?downloadGroup=PCLI501" target="_blank">Go download it</a>!

@@ -1,0 +1,56 @@
+---
+layout: post
+title: vCloud PowerCLI SvMotion
+tags:
+- datastore
+- PowerCLI
+- relocate
+- svmotion
+- vCloud
+- vmware
+- VMware VMFS
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! '#vCloud #PowerCLI SvMotion'
+  publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"177101464915808256";}}}
+  _wpas_done_twitter: '1'
+---
+What's the correct capitalization supposed to be? sVmotion? SVMotion? SvMotion? Blah, whatever. The point is, <a href="https://twitter.com/#!/lamw" target="_blank">William Lam</a> wrote a couple <a href="http://www.virtuallyghetto.com/2012/02/performing-storage-vmotion-in-vcloud.html" target="_blank">killer</a> <a href="http://www.virtuallyghetto.com/2012/02/performing-storage-vmotion-in-vcloud_19.html" target="_blank">posts</a> on doing a storage vMotion through the vCloud API. Feeling the PowerCLI mafia needed a solution as well, I went ahead and wrote it. William's post about performing the vMotion with the REST API made writing the PowerCLI code very easy.
+
+A few general things to note:
+<ol>
+	<li>This is a storage vMotion for the entire VM. If you have VMs with multiple disks on different datastores, the theoretical behavior is that it will move all disks to the same datastore.</li>
+	<li>You have to be a user with SYSTEM access. Normal Org admins don't have to worry about such things as datastores. It's all abstracted. :D</li>
+	<li>You can't SvMotion to vCloud-disabled datastores. (I could think of some interesting use cases for that, but it doesn't work. ;))</li>
+	<li>This is a great method to empty datastores for doing fresh VMFS volumes. Jason Boche has a great VMFS 5 <a href="http://www.boche.net/blog/index.php/2011/07/21/vmfs-5-vmfs-3-whats-the-deal/" target="_blank">article here</a>. Don't forget to disable the datastore in vCloud Director before running! :D</li>
+</ol>
+[sourcecode language="powershell" wraplines="false"]
+
+$vmName = &quot;MyVMName&quot;
+$destDatastoreName = &quot;MyDatastoreName&quot;
+
+$vmQuery = Search-Cloud -QueryType AdminVM -Name $vmName
+
+if ($destDatastoreName -eq $vmQuery.datastoreName)
+{
+ Write-Host -ForegroundColor Red &quot;Silly Wabbit, You are trying to sVmotion to the same Datastore.&quot;
+ break
+}
+else
+{
+ $vm = Get-CIVM $vmName
+ $dsQuery = Search-Cloud -QueryType Datastore -Name $destDatastoreName
+ $dsRef = New-Object vmware.vimautomation.cloud.views.reference
+ $dsRef.Href = &quot;https://$($global:DefaultCIServers[0].name)/api/admin/extension/datastore/$($dsquery.id.split(':')[-1])&quot;
+ $vm.ExtensionData.Relocate($dsRef)
+}
+
+[/sourcecode]
+
+<strong>Lines 4-11:</strong> This is basically some validation to make sure we are not trying to migrate to the same datastore.
+<strong>Line 14:</strong> Get information on the datastore we are migrating to.
+<strong>Line 15:</strong> Create a reference object.
+<strong>Line 16:</strong> Search-Cloud only returns an ID, so we have to construct the href ourselves. (Has to do with the query type Seach-Cloud is using. No biggie.)
+<strong>Line 17:</strong> Relocate!

@@ -1,0 +1,58 @@
+---
+layout: post
+title: Uploading VMs to vCloud with OVFtool
+tags:
+- error
+- missing vapp key
+- Open Virtualization Format
+- ovf
+- ovftool
+- Powershell
+- vCloud
+- vCloud Director
+- vmware
+- Windows Powershell
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'Uploading VMs to #vCloud with OVFtool #Powershell #PowerCLI'
+  _wpas_done_twitter: '1'
+---
+VMware's OVFtool is a command line tool that allows you to convert VMware Virtual Machines to Open Virtualization Format, or OVF. In the latest version, it can also upload VMs to vCloud Director for you as well!
+
+To do this, OVFtool simply requires a source (VMX or OVF), and a destination (a vCloud Locator).
+
+The vCloud locator looks something like this:
+
+[sourcecode language="text" wraplines="false"]
+vcloud://username:password@host:port?org=name_of_org&amp;vapp=name_of_deployed_vapp&amp;catalog=name_of_catalog&amp;vappTemplate=name_of_vapp_template_in_catalog&amp;vdc=name_of_vdc
+[/sourcecode]
+
+As you can see, the vCloud Locator is a URL with all of the information needed to upload your OVF.
+
+Because OVFtool is run from the command line, the simple choice when using Windows is to use the command prompt. Using the Windows command prompt, however, results in errors when uploading to vCloud Director:
+
+[caption id="attachment_684" align="alignnone" width="490"]<a href="http://geekafterfive.files.wordpress.com/2012/08/snag-0164.png"><img class="size-full wp-image-684" title="ovftool error" src="http://geekafterfive.files.wordpress.com/2012/08/snag-0164.png" alt="ovftool error" width="490" height="55" /></a> ovftool error[/caption]
+
+This is most likely because of the special characters ovftool uses in the URL (&amp;, :, ?, @). If I had to guess, I'd say it's the ampersand.
+
+I tried quoting out the vCloud Locator several different ways to get it to understand, but resorted to Powershell to save the day once again.
+
+[sourcecode language="powershell"]
+
+$vCloudLocator = &quot;vcloud://jake:password@vcloud.example.com:443?org=jake&amp;vappTemplate=MyTemplate&amp;catalog=private&quot;
+
+$sourceFile = &quot;C:\jake\MyVM.vmx&quot;
+
+$ovftool = &quot;C:\Program Files\VMware\VMware OVF Tool\ovftool.exe&quot;
+
+&amp; $ovftool $sourceFile $vCloudLocator
+
+[/sourcecode]
+
+Powershell treats the characters are part of the string, so we just simply pass the string as a parameter to OVFtool.
+
+Hope this saves someone a headache! :D
+
+For more OVFtool fun, check out my post on using <a title="Powers Combined: PowerCLI and OVFTool" href="http://geekafterfive.com/2011/10/07/powers-combined-powercli-and-ovftool/">OVF tool with PowerCLI with your vSphere session</a>!

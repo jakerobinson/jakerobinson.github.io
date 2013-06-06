@@ -1,0 +1,216 @@
+---
+layout: post
+title: Powershell Outlook Time Reporting by Category
+tags:
+- category
+- outlook
+- Powershell
+- powershell
+- sap
+- time reporting
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post: #Powershell #Outlook Time Reporting by Category!'
+  _wpas_done_twitter: '1'
+---
+By request, I have revised the code from my original<a title="Time Reporting with Outlook and&nbsp;Powershell" href="http://geekafterfive.com/2012/05/18/time-reporting-with-outlook-and-powershell/"> Outlook Time Reporting</a> to report on Category and day of week with summary totals. A true time sheet really. In fact, I believe someone is using this to import their time into SAP...:D
+
+This was a significant change made completely easy with Powershell.
+
+The HTML and CSV output look like this:
+
+[caption id="attachment_606" align="alignnone" width="446"]<a href="http://geekafterfive.files.wordpress.com/2012/06/scriptscreen.png"><img class="size-full wp-image-606 " style="border:1px solid gray;" title="Sample HTML report" src="http://geekafterfive.files.wordpress.com/2012/06/scriptscreen.png" alt="" width="446" height="187" /></a> Sample HTML report[/caption]
+
+&nbsp;
+
+Here's the new code, but please leave me a comment if you use this! I'd love to hear about it!
+
+[sourcecode language="powershell"]
+
+#
+# OutlookTimeReport.ps1
+# Jake Robinson
+# v1.2
+#
+#
+#
+#
+
+param ( [DateTime] $rangeStart = (get-date -hour 0 -minute 0 -second 0).AddDays(-(get-date).DayOfWeek.value__),
+ [DateTime] $rangeEnd = (get-date -hour 23 -minute 59 -second 59).AddDays(7-(get-date).DayOfWeek.value__),
+ [String] $categories,
+ [String] $calendar,
+ [switch] $csv,
+ [switch] $pickdates)
+
+function pick-date()
+{
+ $objForm = New-Object Windows.Forms.Form
+
+$objForm.Text = &quot;Select a Date&quot;
+ $objForm.Size = New-Object Drawing.Size @(190,190)
+ $objForm.StartPosition = &quot;CenterScreen&quot;
+
+$objForm.KeyPreview = $True
+
+$objForm.Add_KeyDown({
+ if ($_.KeyCode -eq &quot;Enter&quot;)
+ {
+ $dtmDate=$objCalendar.SelectionStart
+ $objForm.Close()
+ }
+ })
+
+$objForm.Add_KeyDown({
+ if ($_.KeyCode -eq &quot;Escape&quot;)
+ {
+ $objForm.Close()
+ }
+ })
+
+$objCalendar = New-Object System.Windows.Forms.MonthCalendar
+ $objCalendar.ShowTodayCircle = $False
+ $objCalendar.MaxSelectionCount = 1
+ $objForm.Controls.Add($objCalendar)
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown({$objForm.Activate()})
+ [void] $objForm.ShowDialog()
+
+if ($dtmDate)
+ {
+ return $dtmDate
+ }
+}
+
+if ($pickdates)
+{
+ [void] [System.Reflection.Assembly]::LoadWithPartialName(&quot;System.Windows.Forms&quot;)
+ [void] [System.Reflection.Assembly]::LoadWithPartialName(&quot;System.Drawing&quot;)
+
+ [DateTime] $pickedStart = pick-date
+ [DateTime] $pickedEnd = pick-date
+
+ If ($pickedStart -and $pickedEnd)
+ {
+ $rangeStart = $pickedStart
+ $rangeEnd = $pickedEnd
+ }
+}
+
+Add-Type -AssemblyName Microsoft.Office.Interop.Outlook
+
+$class = @”
+using Microsoft.Office.Interop.Outlook;public class MyOL
+{
+ public MAPIFolder GetCalendar(string userName)
+ {
+ Application oOutlook = new Application();
+ NameSpace oNs = oOutlook.GetNamespace(&quot;MAPI&quot;);
+ Recipient oRep = oNs.CreateRecipient(userName);
+ MAPIFolder calendar = oNs.GetSharedDefaultFolder(oRep, OlDefaultFolders.olFolderCalendar);
+ return calendar;
+ }
+}
+“@
+
+Add-Type $class -ReferencedAssemblies Microsoft.Office.Interop.Outlook
+
+$outlook = new-object MyOL
+$restriction = &quot;[End] &gt;= '{0}' AND [Start] &lt;= '{1}'&quot; -f $rangeStart.ToString(&quot;g&quot;), $rangeEnd.ToString(&quot;g&quot;)
+$seArray = @()
+$categoryMatch = [string]$categories -replace ' ','|'
+$SECalendar = $outlook.GetCalendar($calendar)
+$appointments = $SECalendar.items
+$appointments.Sort(&quot;[Start]&quot;)
+$appointments.IncludeRecurrences = $true
+$SEappts = $appointments.Restrict($restriction) | where {$_.categories -match $categoryMatch}
+
+# Group the appointments by category
+$grouped = $SEappts | Group-Object categories
+
+# This is our table array
+$table = @()
+
+# Days of the week. Are these language sensitive?
+$dow = @(&quot;Monday&quot;,&quot;Tuesday&quot;,&quot;Wednesday&quot;,&quot;Thursday&quot;,&quot;Friday&quot;)
+# Change hash values to local language if required.
+$dowHash = @{&quot;Monday&quot;=&quot;Monday&quot;; &quot;Tuesday&quot;=&quot;Tuesday&quot;; &quot;Wednesday&quot;=&quot;Wednesday&quot;; &quot;Thursday&quot;=&quot;Thursday&quot;; &quot;Friday&quot;=&quot;Friday&quot;}
+
+# For each category...
+foreach ($group in $grouped)
+{
+ # Start a new row...
+ $row = New-Object PSObject
+
+ # Add the category name to the start of our table...
+ Add-Member -MemberType NoteProperty -Name &quot;Category&quot; -value $group.name -InputObject $row
+
+# For each work day
+ foreach ($day in $dow)
+ {
+ # Sum up the hours for that category.
+ $hours = ($group.group | where {$_.start.dayofweek -eq $day} | Measure-Object -Sum -Property duration).sum /60
+
+# Then add it to our table row.
+ Add-Member -MemberType NoteProperty -Name $dowHash.($day) -Value $hours -InputObject $row
+ }
+ $table += $row
+}
+
+
+# Summary at the end
+$summary = New-Object PSObject
+Add-Member -MemberType NoteProperty -Name &quot;Category&quot; -value &quot;SUMMARY&quot; -InputObject $summary
+foreach ($day in $dow)
+ {
+ # Sum up the hours for that category.
+ $hours = ($SEappts | where {$_.start.dayofweek -eq $day} | Measure-Object -Sum -Property duration).sum /60
+
+# Then add it.
+ Add-Member -MemberType NoteProperty -Name $dowHash.($day) -Value $hours -InputObject $summary
+ }
+$table += $summary
+
+# Get TOTAL hours for final HTML report
+$totalHours = ($SEappts | Measure-Object -Sum -Property duration).sum /60
+
+
+if ($csv)
+{
+ $table | Export-Csv -NoTypeInformation -Path &quot;$HOME\desktop\OutlookTimeReport.csv&quot;
+ Invoke-Item &quot;$HOME\desktop\OutlookTimeReport.csv&quot;
+}
+else
+{
+ $totalpost = &quot;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;TOTAL HOURS:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;$($totalHours)&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;table&gt;&quot;
+ $seHTML = $table | ConvertTo-Html -PostContent $totalpost | Out-File &quot;$HOME\desktop\OutlookTimeReport.html&quot;
+ Invoke-Item &quot;$HOME\desktop\OutlookTimeReport.html&quot;
+}
+
+[/sourcecode]
+
+<span style="font-size:11pt;font-family:'Calibri', 'sans-serif';"><!--[if gte vml 1]&gt;-->
+ 
+ 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+ 
+ 
+ 
+
+ 
+<!--[if !vml]--><!--[endif]--></span>

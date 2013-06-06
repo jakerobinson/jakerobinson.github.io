@@ -1,0 +1,79 @@
+---
+layout: post
+title: Flexible Adapters and the importance of VMware Tools
+tags:
+- flexible
+- pcnet32
+- PowerCLI
+- vCloud
+- vCloud Director
+- Virtual machine
+- vmware
+- VMware Tools
+- vmxnet
+- vmxnet3
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'Flexible Adapters and the importance of #VMware Tools #vCloud #PowerCLI'
+  publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"165061391097663489";}}}
+  _wpas_done_twitter: '1'
+---
+<div class="mceTemp"><dl class="wp-caption alignright zemanta-img"><dt class="wp-caption-dt"><a href="http://commons.wikipedia.org/wiki/File:Grapevinesnail_01.jpg"><img class="zemanta-img-inserted zemanta-img-configured   " title="Helix pomatia English: Picture of a grapevine ..." src="http://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Grapevinesnail_01.jpg/300px-Grapevinesnail_01.jpg" alt="Helix pomatia English: Picture of a grapevine ..." width="240" height="142" /></a></dt></dl></div>
+I was asked recently to write a script to get a count of virtual machines with Flexible adapters that did not have VMware tools installed. The number was surprising to me. 10% of all VMs were Flexible with no VMware Tools. While having a Flexible type network adapter is fine and not having VMware tools installed is sorta fine, but together they force your NICs to 10Mb. TEN MEGABIT, PEOPLE! It's like we're <a href="http://en.wikipedia.org/wiki/Fast_Ethernet" target="_blank">back in 1995</a>!
+
+I decided to turn to the <a href="http://kb.vmware.com/kb/1001805" target="_blank">KB Article</a> on VM Network Adapters for verification. I mean, who even thinks about that anymore? Just set it to VMXNET3 and be done with it, right? Our VMXNET3 adapters are 10Gb. That's TEN GIGABIT! 1000x more bandwidth! Sure enough, from the KB:
+<blockquote>"<strong>With VMware Tools installed</strong>, the VMXNET driver changes the Vlance adapter to the higher performance VMXNET adapter."</blockquote>
+So, now the question is WHY. Why would someone not change their network adapter to E1000 (which is supported on everything you'd want to run), or at least install VMware tools to take advantage of VMXNET?
+<h2>vCloud Director</h2>
+<p style="text-align:left;">vCD 1.0 gives you no option to change your adapters. In order to do so, you will have to call your provider (internal, or public cloud provider) and have their admin power off the machine, remove the flexible adapter, and change it to either E1000 or VMXNET3. Of course there is nothing from stopping you from installing VMware tools on the guest machine, but we'll get to that in a second.</p>
+<p style="text-align:left;">Blaming vCD 1.0 of course is a terrible excuse. "Well, upgrade to 1.5!" you say. "vCD 1.5 gives you the control of adapter types!" Yes, yes it does, but you still have to be careful. The adapter type is still flexible by default, and the adapter types are not displayed without checking the box to show them. Take the following screenshot... I have just added a NIC, and am about to click the OK button.</p>
+<p style="text-align:left;"><a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0011.png"><img class="aligncenter  wp-image-319" title="SNAG-0011" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0011.png" alt="" width="764" height="218" /></a></p>
+See that little check box up there? I was about to create a new NIC with a flexible adapter. Lets click it...
+<p style="text-align:center;"><a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0012.png"><img class="aligncenter  wp-image-320" title="SNAG-0012" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0012.png" alt="" width="764" height="218" /></a></p>
+<p style="text-align:left;">Ahh, that's better. Yep, Flexible. Good thing I checked, huh? :D</p>
+
+<h2 style="text-align:left;">VMware Tools Support</h2>
+<p style="text-align:left;">It's probably eating you up inside that the easy fix is just to install VMware Tools. Who cares if it's flexible, as long as you install VMware tools? Well, I hate to say it, but not all Operating systems support VMware tools, or in part VMXNET.</p>
+<p style="text-align:left;">I'll call Checkpoint Software out on this one as an example. Checkpoint Security Gateways run on an OS called <a href="http://www.checkpoint.com/products/secureplatform/index.html" target="_blank">SecurePlatform</a>, or <a class="zem_slink" title="Check Point VPN-1" href="http://en.wikipedia.org/wiki/Check_Point_VPN-1" rel="wikipedia">SPLAT</a> for short. This highly secure distro of Linux did not have the VMware virtual machine in mind when it was first created. While I haven't tried *too* hard to get VMware tools to build on it, I will say that Checkpoint doesn't support it anyway. It suffices it to say that it works fine with the E1000 adapter. (As long as you can remember to change it. ;))</p>
+
+<h2 style="text-align:left;">Why now?</h2>
+<p style="text-align:left;">The first theory is that more and more we are creating our VMs from scratch in vCloud Director. By doing so, our network adapter will automatically become flexible. In addition to that, a theory is once the machine is created, it is moved to the catalog and used to clone out a number of other machines, all with Flexible adapters.</p>
+<p style="text-align:left;">Forget to install VMware Tools on our template, and it becomes a pain in the neck to deploy from the catalog, boot it, install tools, "re-templatize" it by fixing any guest customization setup we had, power it down and then copy it back to the catalog.</p>
+<p style="text-align:left;">Last theory, again about VMware tools...I have to hand it to VMware Workstation. They bug you to death about installing VMware Tools installation with the slide up/down bar. That thing is annoying, <strong>but effective</strong>. I guarantee VMware tools is installed on all my workstation VMs. Where is that annoy-bar in vCloud Director? Not everyone using vCloud Director is going to be an expert and know the importance of VMware tools.</p>
+
+<h2 style="text-align:left;">Script!</h2>
+<p style="text-align:left;">What's a geekafterfive.com blog post without some insane PowerCLI script? This script nicely outputs a list of VMs for you with flexible adapters that are missing VMware Tools. I'd be interested to know the percentages everyone else is seeing on both vSphere implementations and vCloud implementations. If it's a little crazy looking, it is because I preferred fast runtime over readability.</p>
+
+[sourcecode language="powershell"]
+
+# Get all VM objects
+$vms = get-view -viewtype virtualmachine
+
+# Set up an empty array
+$table = @()
+
+# For Every Vm...
+Foreach ($vm in $vms)
+{
+    # If Tools aren't installed and there is a PCNet32 adapter in the hardware list...
+    if ($vm.guest.toolsstatus -eq &quot;toolsNotInstalled&quot; -and (($vm.config.hardware.device | %{$_ -is [VMware.Vim.VirtualPCNet32]}) -contains $true))
+    {
+        # Then output it to an object and add it to the array
+        $table += New-Object PSObject -Property @{&quot;Name&quot;=$vm.name; &quot;ToolsStatus&quot;=$vm.guest.toolsstatus; &quot;NicType&quot;=&quot;Flexible&quot;}
+    }
+}
+
+# Output the table. You can Export to a CSV or whatever here.
+$table
+
+[/sourcecode]
+<h2 style="text-align:left;">Epilogue</h2>
+So, Dear Reader, If you have read all the way through this epic post, or just scrolled down past all the tl;dr stuff , let me summarize what you need to know:
+<ul>
+	<li>Flexible adapters on your VMs in combination with a lack of VMware Tools is BAD.</li>
+	<li>Install VMware tools</li>
+	<li>Change your adapter type to E1000</li>
+	<li>Or do both, and you have the option for VMXNET3. ;)</li>
+</ul>

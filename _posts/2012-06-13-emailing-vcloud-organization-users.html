@@ -1,0 +1,47 @@
+---
+layout: post
+title: Emailing vCloud Organization Users
+tags:
+- email
+- PowerCLI
+- powershell
+- vCloud
+- vCloud API
+- vCloud Director
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post: Emailing #vCloud Organization Users #PowerCLI #Powershell'
+  _wpas_done_twitter: '1'
+---
+<a href="http://geekafterfive.files.wordpress.com/2012/06/snag-0110.png"><img class="size-full wp-image-617 alignright" style="border:3px solid gray;" title="Notify Users" src="http://geekafterfive.files.wordpress.com/2012/06/snag-0110.png" alt="" width="173" height="102" /></a><a href="http://communities.vmware.com/thread/404454" target="_blank">A question</a> popped in the vCloud PowerCLI forum the other day on how to use the "notify users" function in the vCloud Director Web UI through the vCloud API. While the functionality is not in the API, PowerCLI and Powershell make short work of it with the vCloud snap-in and Powershell's Send-MailMessage cmdlet.
+
+<a href="http://geekafterfive.files.wordpress.com/2012/06/snag-0109.png"><img class="alignnone size-full wp-image-618" title="Sending a message" src="http://geekafterfive.files.wordpress.com/2012/06/snag-0109.png" alt="" width="465" height="595" /></a>
+
+The task in this case was to send an email to all Org users to remind them of the number of VMs they have in a particular organization. The following code could easily be adapted to show: Resource usage, IP addresses, OS usage, etc.
+
+Probably the most interesting thing I find about this code is that it can be used in either a systems admin role, or an organization admin role.
+
+[sourcecode language="powershell"]
+
+$mailServer = &quot;mail.example.com&quot;
+$users = Get-CIUser # use -Org &quot;OrgName&quot; if connected to system Org
+$VApps = Get-CIVApp # use -Org &quot;OrgName&quot; if connected to system Org
+
+foreach ($user in $users)
+{
+ $counter = 0
+ $ownerVApps = $VApps | where {$_.owner -eq $user}
+ $vapps | ForEach-Object {$counter += $_.extensiondata.children.vm.count}
+
+$mailbody = &quot;Greetings, You currently have $counter virtual machines in Organization: $($user.Org)&quot;
+
+Send-MailMessage -SmtpServer $mailServer -To $user.email -From &quot;PowerCLI@example.com&quot; -Body $mailbody
+
+}
+
+[/sourcecode]
+
+&nbsp;

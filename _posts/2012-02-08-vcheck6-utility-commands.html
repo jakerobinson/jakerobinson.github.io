@@ -1,0 +1,67 @@
+---
+layout: post
+title: vCheck6 Utility Commands
+tags:
+- alan renouf
+- PowerCLI
+- vcheck
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'Updated with Tips! vCheck6 Utility Commands #PowerCLI #vCheck'
+  publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"167358397581246464";}}}
+  _wpas_done_twitter: '1'
+---
+A quick video on the plugin utility commands found in vCheck 6! For more info, be sure to visit the <a href="http://www.virtu-al.net/2012/02/08/vcheck-6-0-released/" target="_blank">vCheck 6 release page</a>, and visit the <a href="http://www.virtu-al.net/featured-scripts/vcheck/vcheck-plugins/" target="_blank">vCheck Plugins page</a> to browse the available plugins. Don't forget to <a href="https://twitter.com/#!/alanrenouf" target="_blank">thank Alan</a> for all of his hard work on vCheck!
+
+http://www.youtube.com/watch?v=S_xKCVXAq2E
+
+&nbsp;
+
+If you are not the video watching type, here are some helpful tips:
+
+<strong>1. In order to access the vCheck Utility Commands. You must 'dot-source' the file:</strong>
+
+[sourcecode language="powershell"]. .\vCheckUtils.ps1[/sourcecode]
+
+That's dot[space]dot, for those reading this on a mobile device. ;)
+
+<strong>2. The list of commands will display. The basic functionality is as follows:</strong>
+
+[sourcecode language="powershell"]
+
+Get-vCheckCommand # Get commands found in vCheckUtils.ps1
+Get-vCheckPlugin # Retrieve list of plugins
+Add-vCheckPlugin # Add plugin from Virtu-Al.net
+Remove-vCheckPlugin  # Remove an installed plugin
+[/sourcecode]
+
+<strong>3. Some common uses:</strong>
+
+List Plugins not installed(available from Virtu-al.net repository):
+
+[sourcecode language="powershell"]Get-VCheckPlugin -notinstalled[/sourcecode]
+
+Get a plugin by name:
+
+[sourcecode language="powershell"]Get-VCheckPlugin -name &quot;Plugin Name&quot;[/sourcecode]
+
+Get a plugin by name and install it from the Virtu-Al.net repository:
+
+[sourcecode language="powershell"]Get-VCheckPlugin -name &quot;Plugin Name | Add-VCheckPlugin[/sourcecode]
+
+Get a plugin by name and UNINSTALL it:
+
+[sourcecode language="powershell"]Get-VCheckPlugin -name &quot;Plugin Name | Add-VCheckPlugin[/sourcecode]
+
+Get all plugins that are NOT installed, and install them (warning, lots of plugins!):
+
+[sourcecode language="powershell"]Get-VCheckPlugin -notinstalled | Add-VCheckPlugin[/sourcecode]
+
+Need more help?
+
+[sourcecode language="powershell"]Get-Help Get-VCheckPlugin[/sourcecode]
+
+&nbsp;

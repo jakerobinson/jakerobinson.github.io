@@ -1,0 +1,100 @@
+---
+layout: post
+title: ! 'Powers Combined: PowerCLI and OVFTool'
+tags:
+- Open Virtualization Format
+- ovftool
+- PowerCLI
+- sourcesessionticket
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'Exporting VMs with PowerCLI and OVFtool:'
+  _wpas_done_twitter: '1'
+---
+[caption id="attachment_127" align="alignleft" width="249" caption="&quot;By your powers combined!!!&quot;"]<img class="size-full wp-image-127" title="The Planeteers" src="http://geekafterfive.files.wordpress.com/2011/10/theplaneteers.jpg" alt="&quot;By your powers combined!!!&quot;" width="249" height="201" />[/caption]
+
+This post will show how to combine the automation abilities of PowerCLI with OVFTool, but first:
+
+<strong>a bit of history...</strong>
+<a title="Wikipedia link" href="http://en.wikipedia.org/wiki/Open_Virtualization_Format" target="_blank">Open Virtualization Format (OVF)</a> is designed to be a "universal" packaging system for virtual machines (and vApps, for that matter) across any virtualization platform. While adoption is still happening, it is already VERY useful for importing and exporting across your VMware environments.
+
+VMware has an excellent command-line OVF Tool called...uh...<a href="http://www.vmware.com/support/developer/ovf/" target="_blank">OVFTool</a>. <a href="https://twitter.com/#!/afokkema" target="_blank">Arne</a> has a <a href="http://ict-freak.nl/2011/09/18/vmware-open-virtualization-format-tool/" target="_blank">great post</a> about using OVFTool in your environment.
+
+<strong>The problem...</strong>
+While OVF is a great standard, there can be issues (encoding, unsupported metadata, OVF version mismatches) when importing and exporting to/from different platforms. We're going to talk specifically about the Hybrid Cloud use case: vSphere to vCloud Director.
+
+PowerCLI has a pretty good method for exporting vApps (Export-vApp), but not Virtual Machines. The simple and effective work-around is to simply create a new vApp, move/clone your VM to the vApp, export the vApp using the Export-vApp cmdlet. It works great for vSphere-&gt;;vSphere, but again...not for vSphere-&gt;;vCloud.
+
+[sourcecode language="powershell"]
+New-VApp test02 -Location cluster01
+Move-VM delta -Destination test02
+Export-VApp test02 -Destination C:\users\jake\desktop
+[/sourcecode]
+
+Uploading the OVF produced by the code above results in the following error:
+
+<img class="aligncenter size-full wp-image-119" title="epic fail" src="http://geekafterfive.files.wordpress.com/2011/10/10-7-2011-3-28-58-pm.png" alt="" width="490" height="92" />
+
+<strong>Easy Fix?</strong>
+Use OVFtool. It uploads perfectly to vCloud AND I can directly export the VM without the need for a vApp!
+
+"But wait a tick..." you say. "That's a command-line tool, not a PowerCLI cmdlet! I'll have to have to pass login credentials to OVFtool somehow." Exactly. We're going to use our PowerCLI session and a somewhat secret and cool feature in OVFTool to automate the export of our VM.
+
+<strong>So here's the code:</strong>
+
+[sourcecode language="powershell"]
+function Export-VM
+{
+    param
+    (
+        [parameter(Mandatory=$true,ValueFromPipeline=$true)] $vm,
+        [parameter(Mandatory=$true)][String] $destination
+    )
+
+    $ovftoolpaths = (&amp;quot;C:\Program Files (x86)\VMware\VMware OVF Tool\ovftool.exe&amp;quot;,&amp;quot;C:\Program Files\VMware\VMware OVF Tool\ovftool.exe&amp;quot;)
+    $ovftool = ''
+
+    foreach ($ovftoolpath in $ovftoolpaths)
+    {
+        if(test-path $ovftoolpath)
+        {
+            $ovftool = $ovftoolpath
+        }
+    }
+    if (!$ovftool)
+    {
+        write-host -ForegroundColor red &amp;quot;ERROR: OVFtool not found in it's standard path.&amp;quot;
+        write-host -ForegroundColor red &amp;quot;Edit the path variable or download ovftool here: http://www.vmware.com/support/developer/ovf/&amp;quot;
+    }
+    else
+    {
+        $moref = $vm.extensiondata.moref.value
+        $session = Get-View -Id SessionManager
+        $ticket = $session.AcquireCloneTicket()
+        &amp;amp; $ovftool &amp;quot;--I:sourceSessionTicket=$($ticket)&amp;quot; &amp;quot;vi://$($defaultviserver.name)?moref=vim.VirtualMachine:$($moref)&amp;quot; &amp;quot;$($destination)$($vm.name).ovf&amp;quot;
+    }
+}
+[/sourcecode]
+
+<strong>Lines 26-29 are where the magic happens.</strong>
+Line 26: Get our Moref value for the VM.
+Line 27: Get our PowerCLI session data
+Line 28: Acquire a "clone ticket" for our session
+Line 29: Run OVFTool with our session ticket, moref value, and the destination parameter.
+
+Four lines of code is all it takes, just like Export-vApp. :D
+
+And the best part is uploading to vCloud works:
+
+<img class="aligncenter size-full wp-image-121" title="FTW!" src="http://geekafterfive.files.wordpress.com/2011/10/10-7-2011-3-32-29-pm.png" alt="" width="490" height="73" />
+
+<strong>So, in summary:</strong>
+
+<img class="aligncenter size-full wp-image-122" title="10-7-2011 3-32-50 PM" src="http://geekafterfive.files.wordpress.com/2011/10/10-7-2011-3-32-50-pm.png" alt="" width="490" height="188" />
+
+You can combine the forces of PowerCLI and OVFTool to automate exporting of VMs, perfectly encoded for vCloud uploads.
+
+Stay tuned for part two, where we will use the upcoming vCloud PowerCLI snapin to fully automate VM migration to the public cloud.

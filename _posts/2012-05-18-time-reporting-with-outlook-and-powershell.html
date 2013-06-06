@@ -1,0 +1,185 @@
+---
+layout: post
+title: Time Reporting with Outlook and Powershell
+tags:
+- calendar
+- csv
+- HTML
+- Microsoft Outlook
+- outlook
+- Powershell
+- powershell
+- report
+- shared calendar
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post: Time Reporting with Outlook and #Powershell'
+  publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"203562102055641088";}}}
+  _wpas_done_twitter: '1'
+---
+Do you work at a company that requires you to report your time?
+
+Are you curious how much time you are spending on different projects or duties?
+
+Hate having a separate tool just for time tracking and reporting? (me too!)
+
+My Outlook calendar makes for easy time tracking. It's on my iPhone, my desktop, my laptop, my home PC...but there are no reporting capabilities that I am aware of, and I am not going to buy an app or plugin that I have to manage.
+
+What if I wanted to find out how much time the rest of my team is spending on something like "host maintenance?" They have their calendar shared with me, and I can see their categories, but I would still have to manually add up their time, force them to do double data entry to another app, or something else that requires double-data-entry.
+
+I wrote this Powershell solution to figure out how much time a group of people were spending on "Sales Engineering," and made a couple modifications for this post to allow different users and categories.
+<h2>Features:</h2>
+<h4>Category</h4>
+use <strong>-category</strong> to add up time on. Only single category supported.
+<h4>Multiple calendars</h4>
+use <strong>-calendars</strong> to enter a single name like "Jake Robinson" or multiple in an array: @("Jake Robinson", "Alan Renouf")
+<h4>Date Range</h4>
+By default the current week M-F will be reported. If you need something a little different, you can use <strong>-pickDates</strong> to bring up a graphical calendar to each start and end date (click the date then press enter). You can also use <strong>-rangeStart</strong> and <strong>-rangeEnd</strong> with something like this "5/24/2012"
+<h4>HTML or CSV output</h4>
+Outputs to HTML report by default, or use <strong>-csv</strong> to output to comma separated value file.
+<h2>Screenshots!</h2>
+[caption id="attachment_593" align="alignnone" width="490"]<a href="http://geekafterfive.files.wordpress.com/2012/05/snag-0098.png"><img class="size-full wp-image-593" title="My Calendar" src="http://geekafterfive.files.wordpress.com/2012/05/snag-0098.png" alt="" width="490" height="283" /></a> My Calendar[/caption]
+
+[caption id="attachment_592" align="alignnone" width="412"]<a href="http://geekafterfive.files.wordpress.com/2012/05/snag-0099.png"><img class="size-full wp-image-592" title="Categories" src="http://geekafterfive.files.wordpress.com/2012/05/snag-0099.png" alt="" width="412" height="441" /></a> Categories[/caption]
+
+[caption id="attachment_591" align="alignnone" width="490"]<a href="http://geekafterfive.files.wordpress.com/2012/05/snag-0101.png"><img class="size-full wp-image-591" title="Example with pickDates" src="http://geekafterfive.files.wordpress.com/2012/05/snag-0101.png" alt="" width="490" height="218" /></a> Example with pickDates[/caption]
+
+[caption id="attachment_590" align="alignnone" width="490"]<a href="http://geekafterfive.files.wordpress.com/2012/05/snag-0103.png"><img class="size-full wp-image-590" title="HTML report" src="http://geekafterfive.files.wordpress.com/2012/05/snag-0103.png" alt="" width="490" height="334" /></a> HTML report[/caption]
+
+[caption id="attachment_594" align="alignnone" width="490"]<a href="http://geekafterfive.files.wordpress.com/2012/05/snag-0105.png"><img class="size-full wp-image-594" title="Example using rangeStart and rangeEnd to CSV" src="http://geekafterfive.files.wordpress.com/2012/05/snag-0105.png" alt="" width="490" height="79" /></a> Example using rangeStart and rangeEnd to CSV[/caption]
+
+[caption id="attachment_589" align="alignnone" width="269"]<a href="http://geekafterfive.files.wordpress.com/2012/05/snag-0104.png"><img class="size-full wp-image-589" title="CSV output" src="http://geekafterfive.files.wordpress.com/2012/05/snag-0104.png" alt="" width="269" height="183" /></a> CSV output[/caption]
+<h2>...and here's the script!</h2>
+[sourcecode language="powershell"]
+
+#
+# OutlookTimeReport.ps1
+# Jake Robinson
+# v1.2
+#
+#
+#
+#
+
+param ( [DateTime] $rangeStart = (get-date -hour 0 -minute 0 -second 0).AddDays(-(get-date).DayOfWeek.value__),
+ [DateTime] $rangeEnd = (get-date -hour 23 -minute 59 -second 59).AddDays(7-(get-date).DayOfWeek.value__),
+ [String] $category,
+ [String] $calendars,
+ [switch] $csv,
+ [switch] $pickdates)
+
+function pick-date()
+{
+ $objForm = New-Object Windows.Forms.Form
+
+$objForm.Text = &quot;Select a Date&quot;
+ $objForm.Size = New-Object Drawing.Size @(190,190)
+ $objForm.StartPosition = &quot;CenterScreen&quot;
+
+$objForm.KeyPreview = $True
+
+$objForm.Add_KeyDown({
+ if ($_.KeyCode -eq &quot;Enter&quot;)
+ {
+ $dtmDate=$objCalendar.SelectionStart
+ $objForm.Close()
+ }
+ })
+
+$objForm.Add_KeyDown({
+ if ($_.KeyCode -eq &quot;Escape&quot;)
+ {
+ $objForm.Close()
+ }
+ })
+
+$objCalendar = New-Object System.Windows.Forms.MonthCalendar
+ $objCalendar.ShowTodayCircle = $False
+ $objCalendar.MaxSelectionCount = 1
+ $objForm.Controls.Add($objCalendar)
+
+$objForm.Topmost = $True
+
+$objForm.Add_Shown({$objForm.Activate()})
+ [void] $objForm.ShowDialog()
+
+if ($dtmDate)
+ {
+ return $dtmDate
+ }
+}
+
+if ($pickdates)
+{
+ [void] [System.Reflection.Assembly]::LoadWithPartialName(&quot;System.Windows.Forms&quot;)
+ [void] [System.Reflection.Assembly]::LoadWithPartialName(&quot;System.Drawing&quot;)
+
+ [DateTime] $pickedStart = pick-date
+ [DateTime] $pickedEnd = pick-date
+
+ If ($pickedStart -and $pickedEnd)
+ {
+ $rangeStart = $pickedStart
+ $rangeEnd = $pickedEnd
+ }
+}
+
+Add-Type -AssemblyName Microsoft.Office.Interop.Outlook
+
+$class = @”
+using Microsoft.Office.Interop.Outlook;public class MyOL
+{
+ public MAPIFolder GetCalendar(string userName)
+ {
+ Application oOutlook = new Application();
+ NameSpace oNs = oOutlook.GetNamespace(&quot;MAPI&quot;);
+ Recipient oRep = oNs.CreateRecipient(userName);
+ MAPIFolder calendar = oNs.GetSharedDefaultFolder(oRep, OlDefaultFolders.olFolderCalendar);
+ return calendar;
+ }
+}
+“@
+
+Add-Type $class -ReferencedAssemblies Microsoft.Office.Interop.Outlook
+
+$outlook = new-object MyOL
+$restriction = &quot;[End] &gt;= '{0}' AND [Start] &lt;= '{1}'&quot; -f $rangeStart.ToString(&quot;g&quot;), $rangeEnd.ToString(&quot;g&quot;)
+$seArray = @()
+foreach($se in $calendars)
+{
+ $seObject = New-Object PSObject
+ $SECalendar = $outlook.GetCalendar($se)
+ $appointments = $SECalendar.items
+ $appointments.Sort(&quot;[Start]&quot;)
+ $appointments.IncludeRecurrences = $true
+ $SEappts = $appointments.Restrict($restriction) | where {$_.categories -match $category}
+ $SEhours = ($SEappts | Measure-Object -Sum -Property duration).sum / 60
+ Add-Member -MemberType noteproperty -Value $se -Name &quot;Team Member&quot; -InputObject $seObject
+ Add-Member -MemberType noteproperty -Value $SEhours -Name &quot;Hours&quot; -InputObject $seObject
+ $seArray += $seObject
+}
+$totalHours = ($seArray | measure-object -Sum -Property hours).sum
+$totalsObject = New-Object PSObject
+Add-Member -MemberType noteproperty -Value &quot;TOTAL HOURS&quot; -Name &quot;Team Member&quot; -InputObject $totalsObject
+Add-Member -MemberType noteproperty -Value $totalHours -Name &quot;Hours&quot; -InputObject $totalsObject
+$seArray += $totalsObject
+
+if ($csv)
+{
+ $seArray | Export-Csv -NoTypeInformation -Path &quot;$HOME\desktop\OutlookTimeReport.csv&quot;
+ Invoke-Item &quot;$HOME\desktop\OutlookTimeReport.csv&quot;
+}
+else
+{
+$seHTML = $seArray | ConvertTo-Html -Body &quot;&lt;/pre&gt;
+&lt;h3&gt;$($category): $($rangeStart.ToString(&quot;MM.dd.yyyy&quot;)) - $($rangeEnd.ToString(&quot;MM.dd.yyyy&quot;))&lt;/h3&gt;
+&lt;pre&gt;&quot;| Out-File &quot;$HOME\desktop\OutlookTimeReport.html&quot;
+ Invoke-Item &quot;$HOME\desktop\OutlookTimeReport.html&quot;
+}
+
+ [/sourcecode]
+
+ 
+For more Powershell and Outlook fun, see <a href="http://www.virtu-al.net/2012/05/13/never-miss-an-appointment-again-with-powershell/" target="_blank">Alan's post</a>!</pre>

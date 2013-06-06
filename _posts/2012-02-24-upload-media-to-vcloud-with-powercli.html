@@ -1,0 +1,82 @@
+---
+layout: post
+title: Upload Media to vCloud with PowerCLI
+tags:
+- media
+- PowerCLI
+- vCloud
+- vCloud API
+- vcloud media
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'Another New Post!!! : Upload media to #vCloud with #PowerCLI !'
+  publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"173166131815784448";}}}
+  _wpas_done_twitter: '1'
+  tagazine-media: a:7:{s:7:"primary";s:104:"http://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Small_cdisk_ubt.jpeg/300px-Small_cdisk_ubt.jpeg";s:6:"images";a:1:{s:104:"http://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Small_cdisk_ubt.jpeg/300px-Small_cdisk_ubt.jpeg";a:6:{s:8:"file_url";s:104:"http://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Small_cdisk_ubt.jpeg/300px-Small_cdisk_ubt.jpeg";s:5:"width";s:3:"300";s:6:"height";s:3:"270";s:4:"type";s:5:"image";s:4:"area";s:5:"81000";s:9:"file_path";s:0:"";}}s:6:"videos";a:0:{}s:11:"image_count";s:1:"1";s:6:"author";s:7:"9088041";s:7:"blog_id";s:8:"18937350";s:9:"mod_stamp";s:19:"2012-02-24
+    22:03:15";}
+---
+<a href="http://commons.wikipedia.org/wiki/File:Small_cdisk_ubt.jpeg" target="_blank"><img class="zemanta-img-inserted zemanta-img-configured alignright" title="English: a small compact disk / Memorex CD-RW ..." src="http://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Small_cdisk_ubt.jpeg/300px-Small_cdisk_ubt.jpeg" alt="English: a small compact disk / Memorex CD-RW ..." width="210" height="189" /></a>
+
+&nbsp;
+
+It's a double post Friday! This one won't be quite as long. ;)
+
+&nbsp;
+
+Have a bunch of ISOs you need to upload to your vCloud Director Catalog? This is the script for you! Once in a while I get a crazy "can you do this" from my friend and <a href="http://blog.bluelock.com/" target="_blank">Bluelock</a> product development dude, Ben Miller. The detailed reasons why are still very top secret, but I can at least share the code to upload media and add it to the catalog!!!
+
+Enjoy!
+
+-Jake
+
+&nbsp;
+
+[sourcecode language="powershell"]
+
+$isoFolder = &quot;C:\MyISOs&quot;
+$vdcName = &quot;MyVDC&quot;
+$catalogName = &quot;MyCatalog&quot;
+
+# create / delete a cloud media object
+Get-ChildItem $isoFolder | %{
+
+$media = New-Object VMware.VimAutomation.Cloud.Views.Media
+$media.name = $_.name
+$media.ImageType = 'iso'
+$media.size = $_.length
+
+$media.Files = New-Object VMware.VimAutomation.Cloud.Views.FilesList
+$media.Files.File = @(new-object VMware.VimAutomation.Cloud.Views.File)
+$media.Files.File[0] = new-object VMware.VimAutomation.Cloud.Views.File
+$media.Files.file[0].type = 'iso'
+$media.Files.file[0].name = $_.name
+
+$vdc = Get-OrgVdc $vdcName
+$vdc.ExtensionData.CreateMedia($media)
+
+$filehref = (Get-Media $media.name | Get-CIView).files.file[0].link[0].href
+$webclient = New-Object system.net.webclient
+$webclient.Headers.Add('x-vcloud-authorization',$global:DefaultCIServers[0].sessionid)
+$webclient.Uploadfile($filehref, 'PUT', $_.fullname)
+}
+
+#Add non-catalog media to catalog
+$mediaList = get-media | where {!$_.catalog}
+$catalog = get-catalog $catalogName
+
+foreach ($noCatMedia in $mediaList)
+{
+ $resEntity = $vdc.extensiondata.resourceEntities.resourceEntity | where {$_.name -eq $noCatMedia.name}
+ $catitem = New-Object VMware.VimAutomation.Cloud.Views.CatalogItem
+ $catitem.Entity = $resEntity.href
+ $catitem.name = $resEntity.name
+ $catitem.description = $media.description
+ $catalog.extensiondata.createcatalogitem($catitem)
+}
+
+[/sourcecode]
+
+&nbsp;

@@ -1,0 +1,408 @@
+---
+layout: post
+title: ! 'Deepdive: vCloud vApp Networks'
+tags:
+- isolated networks
+- NAT
+- NatRouted
+- networking
+- PowerCLI
+- Static Routing
+- vApp
+- vCloud
+- vCloud API
+- vCloud Director
+- vcloud vapp
+- vmware
+status: publish
+type: post
+published: true
+meta:
+  _wpas_mess: ! 'New Post! (Finally): Deepdive: #vCloud vApp Networks http://wp.me/p1hst8-7g
+    #PowerCLI'
+  tagazine-media: a:7:{s:7:"primary";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png";s:6:"images";a:13:{s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0077.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0077.png";s:5:"width";s:3:"594";s:6:"height";s:3:"293";s:4:"type";s:5:"image";s:4:"area";s:6:"174042";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png";s:5:"width";s:3:"947";s:6:"height";s:3:"105";s:4:"type";s:5:"image";s:4:"area";s:5:"99435";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png";s:5:"width";s:3:"601";s:6:"height";s:3:"475";s:4:"type";s:5:"image";s:4:"area";s:6:"285475";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png";s:5:"width";s:3:"950";s:6:"height";s:3:"108";s:4:"type";s:5:"image";s:4:"area";s:6:"102600";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png";s:5:"width";s:3:"636";s:6:"height";s:3:"476";s:4:"type";s:5:"image";s:4:"area";s:6:"302736";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png";s:5:"width";s:3:"948";s:6:"height";s:2:"97";s:4:"type";s:5:"image";s:4:"area";s:5:"91956";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png";s:5:"width";s:3:"471";s:6:"height";s:3:"503";s:4:"type";s:5:"image";s:4:"area";s:6:"236913";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0082.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0082.png";s:5:"width";s:3:"942";s:6:"height";s:3:"103";s:4:"type";s:5:"image";s:4:"area";s:5:"97026";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png";s:5:"width";s:3:"813";s:6:"height";s:3:"329";s:4:"type";s:5:"image";s:4:"area";s:6:"267477";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png";s:5:"width";s:3:"604";s:6:"height";s:3:"567";s:4:"type";s:5:"image";s:4:"area";s:6:"342468";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png";s:5:"width";s:3:"839";s:6:"height";s:3:"386";s:4:"type";s:5:"image";s:4:"area";s:6:"323854";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png";s:5:"width";s:2:"88";s:6:"height";s:2:"73";s:4:"type";s:5:"image";s:4:"area";s:4:"6424";s:9:"file_path";s:0:"";}s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png";a:6:{s:8:"file_url";s:62:"http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png";s:5:"width";s:3:"439";s:6:"height";s:3:"206";s:4:"type";s:5:"image";s:4:"area";s:5:"90434";s:9:"file_path";s:0:"";}}s:6:"videos";a:0:{}s:11:"image_count";s:2:"13";s:6:"author";s:7:"9088041";s:7:"blog_id";s:8:"18937350";s:9:"mod_stamp";s:19:"2012-04-24
+    20:53:35";}
+  publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"194891866808922113";}}}
+  _wpas_done_twitter: '1'
+---
+There are three network "fence modes" (connection modes)  in vCloud Director: <strong>Isolated, Bridged, </strong>and<strong> Nat Routed</strong>. These apply to both Org and vApp networks, but for now we are talking in the context of vApps. We'll also talk about the vApp network features, courtesy of vShield Edge: <strong>DHCP, Firewall, Static Routing,</strong> and <strong>NAT.</strong>
+
+A quick note about terminology. The use of terms like "fence mode" are what you will see in the API. When applicable, I will refer to the Web UI term (in parenthesis) or with a screenshot.
+<h3><span style="color:#3366ff;">Isolated</span></h3>
+[caption id="attachment_525" align="alignnone" width="343" caption="An Isolation vApp Network"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0077.png"><img class=" wp-image-525  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Isolation network" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0077.png" alt="" width="343" height="169" /></a>[/caption]
+
+[caption id="attachment_532" align="alignnone" width="446" caption="Isolation network details"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png"><img class=" wp-image-532   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Isolation network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png" alt="" width="446" height="49" /></a>[/caption]
+
+<strong>Definition:</strong> Isolated networks are completely separate networks. By themselves, there is no connection or communication to other networks. Because they are completely isolated, you can do normally frowned upon things like reuse the same subnet over and over in different isolated networks. ;)
+
+<strong>Usage:</strong> Isolated networks are great for back-end communication, such as database traffic. In a web application, for instance, you could give your web servers a second interface on the isolated network that database server resides on. Another use for an isolation network is not isolation at all, but providing your own routing device. Your routing appliance could have one interface on the isolated vApp network, and then another interface on an Org level network. If you wanted features such as dynamic routing, VPN to a specific vApp, Web Application Firewall, etc,  this would be the way to go.
+
+<strong>Features:</strong> Because of their isolation, the only available vShield Edge feature is DHCP. Theoretically speaking, if DHCP were enabled and a vShield was instantiated, static routing should be available, but it's not. Firewall and NAT are not available because they both require connections to another network via vShield Edge.
+<h3><span style="color:#3366ff;">Bridged</span></h3>
+[caption id="attachment_526" align="alignnone" width="392" caption="a Bridged vApp Network"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png"><img class=" wp-image-526   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Bridged" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png" alt="" width="392" height="310" /></a>[/caption]
+
+[caption id="attachment_531" align="alignnone" width="446" caption="Bridged network Details"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png"><img class=" wp-image-531  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="SNAG-0084" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png" alt="" width="446" height="50" /></a>[/caption]
+
+<strong>Definition:</strong> Bridged simply means you are directly connected to an Org network. In fact, the vCloud Web UI calls the connection "Direct" and shows up as the Org Network you are directly connected to.
+
+<strong>Usage:</strong> Bridged (direct connected) networks are commonly used for VMs that need to be accessed from anywhere within your Organization, such as DNS or directory services.
+
+<strong>Features: </strong>None (at the vApp level). The Org level of this network may have feautures available, depending on it's type.
+<h3><span style="color:#3366ff;">NatRouted</span></h3>
+[caption id="attachment_527" align="alignnone" width="392" caption="A natRouted vApp Network"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png"><img class=" wp-image-527  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="natRouted" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png" alt="" width="392" height="293" /></a>[/caption]
+
+[caption id="attachment_530" align="alignnone" width="446" caption="NatRouted network details"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png"><img class=" wp-image-530   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="natrouted network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png" alt="" width="446" height="46" /></a>[/caption]
+
+<strong>Definition:</strong> Connecting a vApp network to an Org network results in a 'natRouted' mode. This automatically invokes the creation of a vShield Edge appliance to connect the two different networks. The appliance has an internal and an external interface. The internal interfaces is on the vApp network, and the external on the org network.
+
+<strong>Usage:</strong> NatRouted networks are required for firewall, NAT, and static routing services provided by vShield Edge. Typical usage includes securely publishing applications to the organization or Internet, but there is also the concept of "fencing," Fencing a network essentially hides a VM's MAC and IP addresses from the rest of your Virtual Datacenter. As long as each VM has a NAT address to the Org network, you can have duplicate IP addresses internally in the vApp because it is "hidden" by the vShield Edge device. This won't work if you are using static routing.
+
+<strong>Features: </strong>All of 'em! DHCP, Firewall, NAT, Static Routing
+<h3><span style="color:#3366ff;">More on fenced mode...</span></h3>
+[caption id="attachment_528" align="alignnone" width="377" caption="A fenced vApp"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png"><img class=" wp-image-528 " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fenced mode" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png" alt="" width="377" height="402" /></a>[/caption]
+
+[caption id="attachment_529" align="alignnone" width="446" caption="Fenced vApp Network Details"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0082.png"><img class=" wp-image-529  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fenced network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0082.png" alt="" width="446" height="48" /></a>[/caption]
+
+[caption id="attachment_533" align="alignnone" width="490" caption="Fence vApp Checkbox"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png"><img class="size-full wp-image-533  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fence vApp Checkbox" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png" alt="" width="490" height="198" /></a>[/caption]
+
+There is a checkbox in the UI to "Fence vApp." This option takes a 'bridged' network, and turns it into 'natRouted.' It will show the network as "Fenced" in the UI. The VMs within this vApp still have Org Network IPs, but a vShield device is placed in between the VMs and the Org network. So essentially, you have duplicate subnets on the internal and external sides of the vShield Edge device. As a network guy, this gives me heartburn. Here's a screenshot to demonstrate a potential problem using the "fence vApp" option:
+
+[caption id="attachment_541" align="alignnone" width="490" caption="Anyone else see an issue here? I'll give you a hint: 102"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png"><img class="size-full wp-image-541   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fence woops" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png" alt="" width="490" height="459" /></a>[/caption]
+
+Basically the "test (fenced)" VM will never be able to communicate with "test" with the same IP address of 192.168.1.102. The reverse is not true because you will be communicating to the external "test (fenced)" address of 192.168.1.105.
+
+My opinion? If you want to mask IP and MAC addresses, just use a natRouted type. No need to complexify when there is a perfect solution available.
+<h3><span style="color:#3366ff;">Managing your vApp networks with PowerCLI</span></h3>
+Bust out your <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/index.html" target="_blank">vCloud API Schema Reference</a>, because we're going to be playing with the <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/NetworkConfigSectionType.html" target="_blank">NetworkConfigSection</a> of the vApp!
+
+To get you going, you'll want to retrieve the NetworkConfigSection of the vApp, which can be done like so:
+
+[sourcecode language="powershell" wraplines="false"]
+$networkConfigSection = (Get-CIVapp MyVApp).extensiondata.GetNetworkConfigSection()
+[/sourcecode]
+
+Now we can start to explore. Using the schema as our guide, we can drill down to actual config.
+
+[sourcecode language="powershell" wraplines="false"]
+$networkConfigSection.NetworkConfig[0].configuration
+[/sourcecode]
+
+Note the index at the end of NetworkConfig. Even if you only have 1 network in your vApp, you still have to specify an index of the collection or pipe to a where-object {$_.networkname -eq "NetworkName"}
+
+<em>FenceMode</em> specifies the vApp network type, which can be one of: <strong>isolated, bridged, natRouted</strong>
+
+<em>ParentNetwork</em> specifies the Org network that the vApp network is connected to. This doesn't apply to isolated networks, can you guess why? ;)
+
+<em>Features</em> contains the DHCP, Firewall, NAT, and Static Routing configuration
+
+<em>IPScope</em> contains the gateway, subnet, DNS, and IP Pool.
+
+Pretty much all of this is modifiable (refer to the schema reference). Simply assign a new value to something and then run:
+
+[sourcecode language="powershell" wraplines="false"]
+$networkConfigSection.updateServerData()
+[/sourcecode]
+
+Let's create some new networks:
+<h4><span style="color:#3366ff;">Isolated</span></h4>
+[sourcecode language="powershell" wraplines="false"]
+$mynetwork = new-object vmware.vimautomation.cloud.views.vappnetworkconfiguration
+$mynetwork.networkName = &quot;MyIsolatedNetwork&quot;
+
+$mynetwork.configuration = new-object vmware.vimautomation.cloud.views.networkconfiguration
+$mynetwork.configuration.fencemode = &quot;isolated&quot;
+
+$mynetwork.Configuration.IpScope = new-object vmware.vimautomation.cloud.views.ipscope
+$mynetwork.Configuration.IpScope.gateway = &quot;192.168.3.1&quot;
+$mynetwork.Configuration.IpScope.Netmask = &quot;255.255.255.0&quot;
+$mynetwork.Configuration.IpScope.Dns1 = &quot;8.8.8.8&quot;
+
+$mynetwork.Configuration.IpScope.ipranges = new-object vmware.vimautomation.cloud.views.ipranges
+$mynetwork.Configuration.IpScope.IpRanges.IpRange = new-object vmware.vimautomation.cloud.views.iprange
+$mynetwork.Configuration.IpScope.IpRanges.IpRange[0].startaddress = &quot;192.168.3.100&quot;
+$mynetwork.Configuration.IpScope.IpRanges.IpRange[0].endaddress = &quot;192.168.3.200&quot;
+
+$networkConfigSection = $vapp.ExtensionData.GetNetworkConfigSection()
+$networkConfigSection.networkconfig += $mynetwork
+$networkConfigSection.updateserverdata()
+[/sourcecode]
+<h4><span style="color:#3366ff;">Bridged</span></h4>
+[sourcecode language="powershell" wraplines="false"]
+$orgNetworkName = &quot;MyOrgNetwork&quot;
+$orgNetwork = (Get-Org).extensiondata.networks.network | where {$_.name -eq $orgNetworkName}
+
+$mynetwork = new-object vmware.vimautomation.cloud.views.vappnetworkconfiguration
+$mynetwork.NetworkName = $orgNetworkName
+
+$mynetwork.configuration = new-object vmware.vimautomation.cloud.views.networkconfiguration
+$mynetwork.configuration.fencemode = &quot;bridged&quot;
+
+$mynetwork.Configuration.ParentNetwork = New-Object vmware.vimautomation.cloud.views.reference
+$mynetwork.Configuration.ParentNetwork.Href = $orgNetwork.href
+
+$networkConfigSection = $vapp.ExtensionData.GetNetworkConfigSection()
+$networkConfigSection.networkconfig += $mynetwork
+$networkConfigSection.updateserverdata()
+
+[/sourcecode]
+<h4><span style="color:#3366ff;">natRouted</span></h4>
+[sourcecode language="powershell" wraplines="false"]
+$orgNetworkName = &quot;MyOrgNetwork&quot;
+$orgNetwork = (Get-Org).extensiondata.networks.network | where {$_.name -eq $orgNetworkName}
+
+$mynetwork = new-object vmware.vimautomation.cloud.views.vappnetworkconfiguration
+$mynetwork.networkName = &quot;MyNatRoutedNetwork&quot;
+
+$mynetwork.configuration = new-object vmware.vimautomation.cloud.views.networkconfiguration
+$mynetwork.configuration.fencemode = &quot;natRouted&quot;
+
+$mynetwork.Configuration.ParentNetwork = New-Object vmware.vimautomation.cloud.views.reference
+$mynetwork.Configuration.ParentNetwork.Href = $orgNetwork.href
+
+$mynetwork.Configuration.IpScope = new-object vmware.vimautomation.cloud.views.ipscope
+$mynetwork.Configuration.IpScope.gateway = &quot;192.168.3.1&quot;
+$mynetwork.Configuration.IpScope.Netmask = &quot;255.255.255.0&quot;
+$mynetwork.Configuration.IpScope.Dns1 = &quot;8.8.8.8&quot;
+
+$mynetwork.Configuration.IpScope.ipranges = new-object vmware.vimautomation.cloud.views.ipranges
+$mynetwork.Configuration.IpScope.IpRanges.IpRange = new-object vmware.vimautomation.cloud.views.iprange
+$mynetwork.Configuration.IpScope.IpRanges.IpRange[0].startaddress = &quot;192.168.3.100&quot;
+$mynetwork.Configuration.IpScope.IpRanges.IpRange[0].endaddress = &quot;192.168.3.200&quot;
+
+# With no firewall
+$mynetwork.Configuration.features += new-object vmware.vimautomation.cloud.views.firewallservice
+$mynetwork.Configuration.features[0].isenabled = $false
+
+$networkConfigSection = $vapp.ExtensionData.GetNetworkConfigSection()
+$networkConfigSection.networkconfig += $mynetwork
+$networkConfigSection.updateserverdata()
+[/sourcecode]
+
+Note on the above, I explicitly told it to create the natRouted network without a firewall. By default, it will enable the firewall, but we'll talk about in the services section.
+<h4><span style="color:#3366ff;">Removing Networks </span></h4>
+(Extra handy if you want to remove an Org network reference from a vApp!)
+
+[sourcecode language="powershell" wraplines="false"]
+$removeNetworkName = &quot;MyNetwork&quot;
+$networkConfigSection = $vapp.ExtensionData.GetNetworkConfigSection()
+$networkConfigSection.networkconfig = $networkConfigSection.networkconfig | where {$_.networkname -ne $removeNetworkName}
+$networkConfigSection.updateserverdata()
+[/sourcecode]
+<h4><span style="color:#3366ff;">Services</span></h4>
+You'll find the services in the features collection here:
+
+[sourcecode language="powershell" wraplines="false"]
+
+$networkConfigSection.networkConfig[0].configuration.features
+
+[/sourcecode]
+
+Here's what the natRouted network features look like in Powershell. I did a gettype() afterwards to show you the object types for each service.
+
+[caption id="attachment_560" align="alignnone" width="490" caption="natRouted network features"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png"><img class="size-full wp-image-560 " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="SNAG-0091" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png" alt="" width="490" height="225" /></a>[/caption]
+
+The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/FirewallServiceType.html" target="_blank">Firewall Service</a>
+
+This is really handy if you have a spreadsheet full of rules, or want to add an entire range of IPs (which The vCloud Director UI and API do not support that at this time.) As stated above, the firewall service is added by default in a new natRouted network. By default it's set to deny all inbound.
+
+[sourcecode language="powershell" wraplines="false"]
+
+$fwService = New-Object vmware.vimautomation.cloud.views.firewallservice
+$fwService.DefaultAction = &quot;drop&quot;
+$fwService.LogDefaultAction = $false
+$fwService.IsEnabled = $true
+
+#Add two rules
+$fwService.FirewallRule = New-Object vmware.vimautomation.cloud.views.firewallrule
+$fwService.FirewallRule += New-Object vmware.vimautomation.cloud.views.firewallrule
+
+#First Rule
+$fwService.FirewallRule[0].isenabled = $true
+$fwService.FirewallRule[0].description = &quot;Web In&quot;
+
+$fwService.FirewallRule[0].protocols = New-Object vmware.vimautomation.cloud.views.firewallRuleTypeProtocols
+$fwService.FirewallRule[0].protocols.tcp = $true
+
+$fwService.FirewallRule[0].policy = &quot;allow&quot;
+$fwService.FirewallRule[0].port = &quot;80&quot;
+$fwService.FirewallRule[0].destinationIp = &quot;192.168.2.10&quot;
+$fwService.FirewallRule[0].sourceport = &quot;-1&quot;
+$fwService.FirewallRule[0].sourceip = &quot;Any&quot;
+$fwService.FirewallRule[0].direction = &quot;in&quot;
+
+#Second Rule
+$fwService.FirewallRule[1].isenabled = $true
+$fwService.FirewallRule[1].description = &quot;SSH In&quot;
+
+$fwService.FirewallRule[1].protocols = New-Object vmware.vimautomation.cloud.views.firewallRuleTypeProtocols
+$fwService.FirewallRule[1].protocols.tcp = $true
+
+$fwService.FirewallRule[1].policy = &quot;allow&quot;
+$fwService.FirewallRule[1].port = &quot;22&quot;
+$fwService.FirewallRule[1].destinationIp = &quot;192.168.2.10&quot;
+$fwService.FirewallRule[1].sourceport = &quot;-1&quot;
+$fwService.FirewallRule[1].sourceip = &quot;Any&quot;
+$fwService.FirewallRule[1].direction = &quot;in&quot;
+
+[/sourcecode]
+
+If you are adding the firewall service to a new network, just paste the above code into the creation code. If you are adding to an existing network, you'll need some additional code. Warning, this currently deletes the old ruleset. This was meant to add firewall service where there was none before:
+
+[sourcecode language="powershell" wraplines="false"]
+
+$vappName = &quot;My vApp&quot;
+$vappNetworkName = &quot;My vApp Network&quot;
+$networkConfigSection = (Get-CIVApp $vappName).extensiondata.GetNetworkConfigSection()
+$vAppNetwork = $networkConfigSection.NetworkConfig | where {$_.networkName -eq $vappNetworkName}
+$vAppNetwork.Configuration.Features = $vAppNetwork.Configuration.Features | where {!($_ -is [vmware.vimautomation.cloud.views.firewallservice])}
+
+# Remove the NAT service if there is nothing in there (auto mapped), otherwise the update will error out. :(
+if (!($vAppNetwork.Configuration.Features | where {$_ -is [vmware.vimautomation.cloud.views.natservice]}).natrule[0].description)
+{
+ $vAppNetwork.Configuration.Features = $vAppNetwork.Configuration.Features | where {!($_ -is [vmware.vimautomation.cloud.views.natservice])}
+}
+
+# Add our new ruleset
+$vAppNetwork.Configuration.Features += $fwService
+$networkConfigSection.UpdateServerData()
+
+[/sourcecode]
+
+The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/DhcpServiceType.html" target="_blank">DHCP Service</a>
+
+[sourcecode language="powershell" wraplines="false"]
+
+$dhcpService = New-Object vmware.vimautomation.cloud.views.dhcpservice
+$dhcpService.DefaultLeaseTime = &quot;3600&quot;
+$dhcpService.MaxLeaseTime = &quot;7200&quot;
+$dhcpService.IsEnabled = $true
+
+$dhcpService.IpRange = New-Object vmware.vimautomation.cloud.views.iprange
+$dhcpService.IpRange.StartAddress = &quot;192.168.2.2&quot;
+$dhcpService.IpRange.EndAddress = &quot;192.168.2.50&quot;
+
+[/sourcecode]
+
+Like the firewall service, DHCP is automatically added to a new a new network, but is set to disabled. If you want to use this code to add DHCP to an existing network, you'll just need to modify the existing service, or remove the old service and add this one. You will also need to omit the NAT service section when updating an existing network or you'll encounter an error.
+
+The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/NatServiceType.html" target="_blank">Nat Service</a>
+
+If the NAT service box is checked (and it is by default), then the NatService will already be enabled and the NatService object will be there.
+
+The <em>NatType</em> allows you to pick: ipTranslation and portForwarding. You must choose one or the other. :P
+
+There is also a <em>policy</em>, which lets you choose what traffic will NAT (all, or inbound only): allowTraffic, or allowTrafficIn
+
+Unfortunately, the NAT service is not yet fully implemented in the .NET SDK/PowerCLI, so you'll have to go straight REST API on this one...
+
+Before we do, it's important to know the different NAT rule types:
+
+<em>OneToOneBasicRule</em>: This simply maps an internal IP to an External IP. This is what I typically think of as a Static, or 1:1 NAT.
+
+<em>OneToOneVmRule</em>: This maps a specific VM Nic to an external address. This is helpful if you change your internal IP and don't want to fiddle with NAT rules at the same time.
+
+<em>PortForwardingRule</em>: Also a simple mapping rule to map a port on the external IP to an internal IP address.
+
+<em>VmRule</em>: Odd naming, but it's port forwarding to the VM Nic, rather than an IP address.
+
+Ok, so let's take a peek at our NAT rules using Powershell with the help of System.Net.Webclient:
+
+[sourcecode language="powershell" wraplines="false"]&lt;/pre&gt;
+$vApp = Get-CIVApp &quot;vapp network testing&quot;
+$vAppNetworkName = &quot;natRouted&quot;
+
+$netConf = $vapp.ExtensionData.GetNetworkConfigSection()
+$netConfUri = $netconf.Href
+$netConfType = $netconf.Type
+
+$webclient = New-Object system.net.webclient
+$webclient.Headers.Add(&quot;x-vcloud-authorization&quot;,$netconf.Client.SessionKey)
+$webclient.Headers.Add(&quot;accept&quot;,$netConfType)
+[xml]$netConfXML = $webclient.DownloadString($netConfUri)
+&lt;pre&gt;
+
+[/sourcecode]
+
+Basically, we just downloaded the XML representation of the NetworkConfigSection, bypassing the .NET SDK and communicating directly to the vCloud API. REST APIs ROCK.
+
+We can now drill down to our Nat Rules:
+
+[sourcecode language="powershell" wraplines="false"]
+
+($netConfXML.NetworkConfigSection.NetworkConfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.natrule
+
+[/sourcecode]
+
+This will return something like:
+
+[caption id="attachment_569" align="alignnone" width="88" caption="Port Forwarding Rules"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png"><img class="size-full wp-image-569" title="SNAG-0093" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png" alt="" width="88" height="73" /></a>[/caption]
+
+You'll need to drill down one level further to view the rules. I am going to use a foreach to show all of them:
+
+[sourcecode language="powershell" wraplines="false"]
+
+($netConfXML.NetworkConfigSection.NetworkConfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.natrule | foreach{$_.vmrule}
+
+[/sourcecode]
+
+...and you'll end up with something like this:
+
+[caption id="attachment_570" align="alignnone" width="439" caption="Port forwarding rule details"]<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png"><img class="size-full wp-image-570" title="SNAG-0094" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png" alt="" width="439" height="206" /></a>[/caption]
+
+So, now we can GET our NAT rules, how to we SET them? We have to get a bit more complicated and use [System.Net.Webrequest]. This is an example of creating a new NAT rule for port translation. OneToOne rules will be a bit different, so again, this is purely for example. If you need something specific and can't figure it out, I'd be glad to help.
+
+[sourcecode language="powershell" wraplines="false"]
+
+$NatPort = &quot;53&quot;
+$natRule = ($netConfXML.NetworkConfigSection.Networkconfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.natrule[0].clonenode(1)
+$natRule.VmRule.ExternalPort = $NatPort
+$natRule.VmRule.InternalPort = $NatPort
+($netConfXML.NetworkConfigSection.Networkconfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.appendChild($NatRule)
+
+$request = [System.Net.WebRequest]::Create($netConfUri);
+$request.Headers.Add(&quot;x-vCloud-authorization&quot;,$netconf.Client.SessionKey)
+$request.Accept=&quot;application/vnd.vmware.vcloud.task+xml&quot;
+$request.Method=&quot;PUT&quot;
+$request.ContentType = $netConfType
+
+$postData = $netConfXML.outerxml
+#adding strings to xml puts in silly newlines.
+$xmlString = $postData.replace(&quot;&#xA;&quot;,&quot;&quot;)
+[byte[]]$xmlEnc = [System.Text.Encoding]::UTF8.GetBytes($xmlString)
+$request.ContentLength = $xmlEnc.length
+[System.IO.Stream]$requestStream = $request.GetRequestStream()
+$requestStream.write($xmlEnc, 0, $xmlEnc.Length)
+$requestStream.Close()
+$response = $request.GetResponse()
+$responseStream = $response.getResponseStream()
+$streamReader = new-object System.IO.StreamReader($responseStream)
+$result = $streamReader.ReadtoEnd()
+$streamReader.close()
+$response.close()
+
+[/sourcecode]
+
+&nbsp;
+
+The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/StaticRoutingServiceType.html" target="_blank">StaticRouting Service</a>
+
+The Static Routing service controls routing within the vShield Edge.
+
+[sourcecode language="powershell" wraplines="false"]
+
+$routeService = New-Object vmware.vimautomation.cloud.views.staticroutingservice
+$routeService.IsEnabled = $true
+
+$routeService.StaticRoute = New-Object vmware.vimautomation.cloud.views.staticroute
+$routeService.StaticRoute[0].name = &quot;test&quot;
+$routeService.StaticRoute[0].network = &quot;192.168.1.0/24&quot;
+$routeService.StaticRoute[0].nexthopip = &quot;192.168.2.1&quot;
+$routeService.StaticRoute[0].interface = &quot;External&quot;
+
+[/sourcecode]
+
+Again, if you are adding this to an existing network, you'll need to omit the Nat Service, or you will encounter an error.
+
+&nbsp;
+<h3><span style="color:#3366ff;">Wrap up...</span></h3>
+WHEW, that's all I have for now. I like answering questions, so please post in the comments or get me on twitter.
