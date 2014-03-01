@@ -23,16 +23,16 @@ Have you downloaded a really cool appliance in OVF and want to quickly upload it
 
 Here's a simple PowerCLI method to get your OVF appliance from your desktop into your Org:
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
-$ovfPath = &quot;C:\users\me\desktop\MyCoolAppliance.ovf&quot;
+$ovfPath = "C:\users\me\desktop\MyCoolAppliance.ovf"
 
-$orgVdc = Get-OrgVdc &quot;My Org vDC&quot;
+$orgVdc = Get-OrgVdc "My Org vDC"
 
-$catalog = Get-Catalog &quot;My Catalog&quot;
+$catalog = Get-Catalog "My Catalog"
 
 Import-CIVAppTemplate -SourcePath $ovfPath -OrgVdc $orgVdc -Catalog $catalog
 
-[/sourcecode]
+{% endhighlight %}
 
 As a subjective observation, it seems to run a lot faster than the Java uploader, but pending a real speed test, it's just another way to upload an OVF into your catalog. :D

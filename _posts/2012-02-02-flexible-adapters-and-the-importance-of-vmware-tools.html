@@ -46,7 +46,7 @@ See that little check box up there? I was about to create a new NIC with a flexi
 <h2 style="text-align:left;">Script!</h2>
 <p style="text-align:left;">What's a geekafterfive.com blog post without some insane PowerCLI script? This script nicely outputs a list of VMs for you with flexible adapters that are missing VMware Tools. I'd be interested to know the percentages everyone else is seeing on both vSphere implementations and vCloud implementations. If it's a little crazy looking, it is because I preferred fast runtime over readability.</p>
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 # Get all VM objects
 $vms = get-view -viewtype virtualmachine
@@ -58,17 +58,17 @@ $table = @()
 Foreach ($vm in $vms)
 {
     # If Tools aren't installed and there is a PCNet32 adapter in the hardware list...
-    if ($vm.guest.toolsstatus -eq &quot;toolsNotInstalled&quot; -and (($vm.config.hardware.device | %{$_ -is [VMware.Vim.VirtualPCNet32]}) -contains $true))
+    if ($vm.guest.toolsstatus -eq "toolsNotInstalled" -and (($vm.config.hardware.device | %{$_ -is [VMware.Vim.VirtualPCNet32]}) -contains $true))
     {
         # Then output it to an object and add it to the array
-        $table += New-Object PSObject -Property @{&quot;Name&quot;=$vm.name; &quot;ToolsStatus&quot;=$vm.guest.toolsstatus; &quot;NicType&quot;=&quot;Flexible&quot;}
+        $table += New-Object PSObject -Property @{"Name"=$vm.name; "ToolsStatus"=$vm.guest.toolsstatus; "NicType"="Flexible"}
     }
 }
 
 # Output the table. You can Export to a CSV or whatever here.
 $table
 
-[/sourcecode]
+{% endhighlight %}
 <h2 style="text-align:left;">Epilogue</h2>
 So, Dear Reader, If you have read all the way through this epic post, or just scrolled down past all the tl;dr stuff , let me summarize what you need to know:
 <ul>

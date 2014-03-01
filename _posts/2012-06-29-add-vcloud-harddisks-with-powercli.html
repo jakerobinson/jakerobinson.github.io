@@ -33,13 +33,13 @@ So, with a mix of PowerCLI and some Powershell .NET magic, I give you... <span s
 
 Here are a couple different ways to run the command:
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 # Passing VM via pipeline
-Get-CIVM &quot;MyVM&quot; | New-CIHarddisk -size 10240
+Get-CIVM "MyVM" | New-CIHarddisk -size 10240
 
 # Or just using a VM name
-New-CIHarddisk -vm &quot;MyVM&quot; -size 10240
-[/sourcecode]
+New-CIHarddisk -vm "MyVM" -size 10240
+{% endhighlight %}
 
 Here's what it looks like after you add more harddisks to a running VM...I may have had a little too much fun with this one:
 
@@ -47,14 +47,14 @@ Here's what it looks like after you add more harddisks to a running VM...I may h
 
 So enjoy, but be careful!
 
-[sourcecode language="powershell" wraplines="false"]
+{% highlight powershell %}
 
 function New-CIHarddisk
 {
  [cmdletbinding()]
  param
  (
- [Parameter (ParameterSetName=&quot;pipeline&quot;,ValueFromPipeline=$true,Mandatory=$true)]$vm,
+ [Parameter (ParameterSetName="pipeline",ValueFromPipeline=$true,Mandatory=$true)]$vm,
  [Parameter (Position=0, Mandatory=$true)]$size
  )
 
@@ -66,39 +66,39 @@ Process
  $vm = get-civm $vm
  }
  $vmHardware = $vm.ExtensionData.GetVirtualHardwareSection()
- $scsiController = $vmHardware.item | where {$_.resourceType.value -eq &quot;6&quot;}
- $highaddress = ($vmHardware.item | where {$_.resourcetype.value -eq &quot;17&quot;} | Sort-Object addressonParent)[-1].addressonParent.value
+ $scsiController = $vmHardware.item | where {$_.resourceType.value -eq "6"}
+ $highaddress = ($vmHardware.item | where {$_.resourcetype.value -eq "17"} | Sort-Object addressonParent)[-1].addressonParent.value
  $addressOnParent = [int]$highaddress + 1
- $highInstance = ($vmHardware.item | where {$_.resourcetype.value -eq &quot;17&quot;} | Sort-Object instanceID)[-1].instanceId.value
+ $highInstance = ($vmHardware.item | where {$_.resourcetype.value -eq "17"} | Sort-Object instanceID)[-1].instanceId.value
  $instanceId = [int]$highInstance + 1
- $highElement = ($vmHardware.item | where {$_.resourcetype.value -eq &quot;17&quot;} | Sort-Object elementName)[-1].elementName.value
+ $highElement = ($vmHardware.item | where {$_.resourcetype.value -eq "17"} | Sort-Object elementName)[-1].elementName.value
  $elementName = [int]$highElement.Split()[-1] + 1
 
 # We need to get the raw XML via vCloud API to add the new disk.
- $hardwareContentType = &quot;application/vnd.vmware.vcloud.virtualHardwareSection+xml&quot;
+ $hardwareContentType = "application/vnd.vmware.vcloud.virtualHardwareSection+xml"
  $webclient = New-Object system.net.webclient
- $webclient.Headers.Add(&quot;x-vcloud-authorization&quot;,$vmHardware.Client.SessionKey)
- $webclient.Headers.Add(&quot;accept&quot;,$hardwareContentType)
+ $webclient.Headers.Add("x-vcloud-authorization",$vmHardware.Client.SessionKey)
+ $webclient.Headers.Add("accept",$hardwareContentType)
  [xml]$hardwareConfXML = $webclient.DownloadString($vmhardware.href)
 
 # Clone the XML node, assign our variables, and insert child into the XML
  $newDisk = ($hardwareConfXML.VirtualHardwareSection.Item | where {$_.resourcetype -eq 17})[-1].clonenode(1)
- $newDisk.AddressOnParent = &quot;$addressOnParent&quot;
- $newDisk.InstanceId = &quot;$instanceId&quot;
- $newDisk.elementName = &quot;Hard Disk $elementName&quot;
- $newdisk.hostresource.capacity = &quot;$size&quot;
- $newDisk.parent = &quot;$($scsiController.instanceID.value)&quot;
+ $newDisk.AddressOnParent = "$addressOnParent"
+ $newDisk.InstanceId = "$instanceId"
+ $newDisk.elementName = "Hard Disk $elementName"
+ $newdisk.hostresource.capacity = "$size"
+ $newDisk.parent = "$($scsiController.instanceID.value)"
  [void]$hardwareConfXML.VirtualHardwareSection.InsertAfter($newDisk,($hardwareConfXML.VirtualHardwareSection.Item | where {$_.resourcetype -eq 17})[-1])
 
 # PUT the data back through vCloud API
  $request = [System.Net.WebRequest]::Create($vmHardware.href);
- $request.Headers.Add(&quot;x-vCloud-authorization&quot;,$vmHardware.Client.SessionKey)
- $request.Accept=&quot;application/vnd.vmware.vcloud.task+xml&quot;
- $request.Method=&quot;PUT&quot;
+ $request.Headers.Add("x-vCloud-authorization",$vmHardware.Client.SessionKey)
+ $request.Accept="application/vnd.vmware.vcloud.task+xml"
+ $request.Method="PUT"
  $request.ContentType = $hardwareContentType
  $postData = $hardwareConfXML.virtualhardwaresection.outerxml
- $xmlString = $postData.replace(&quot;
-&quot;,&quot;&quot;) # adding strings to xml puts in silly newlines.
+ $xmlString = $postData.replace("
+","") # adding strings to xml puts in silly newlines.
  [byte[]]$xmlEnc = [System.Text.Encoding]::UTF8.GetBytes($xmlString)
  $request.ContentLength = $xmlEnc.length
  [System.IO.Stream]$requestStream = $request.GetRequestStream()
@@ -113,4 +113,4 @@ Process
  }
 }
 
-[/sourcecode]
+{% endhighlight %}

@@ -24,7 +24,7 @@ Well, prepare to get even more excited, because...
 <h3> <strong><a title="PowerCLI Home page" href="http://communities.vmware.com/community/vmtn/server/vsphere/automationtools/powercli" target="_blank">PowerCLI 5.01 is now available</a>, with a shiny new snapin for vCloud Director 1.5!</strong></h3>
 Check it out:
 
-[sourcecode language="text" highlight="4,10"]
+{% highlight powershell %}
 PS &gt; Get-PowerCLIVersion
 PowerCLI Version
 ----------------
@@ -37,22 +37,22 @@ Snapin Versions
  VMware vCloud Director PowerCLI Component 1.5
  VMware License PowerCLI Component 5.0
  VMware vSphere PowerCLI Component 5.0
-[/sourcecode]
+{% endhighlight %}
 
 &nbsp;
 
-[sourcecode highlight="7"]
+{% highlight powershell %}
 PS &gt; Get-PSSnapin vmware.vimautomation.cloud
 
 Name : vmware.vimautomation.cloud
 PSVersion : 2.0
 Description : This Windows Powershell snap-in contains This Windows Powershell for managing Cloud..
 
-[/sourcecode]
+{% endhighlight %}
 
 Let's take a look at the cloud cmdlets we get in this release!
 
-[sourcecode language="powershell" highlight="5,6,7,8,9,10,11,12,13,15,16,17,18"]
+{% highlight powershell %}
 
 get-command -Module vmware.vimautomation.cloud | select name
 
@@ -76,7 +76,7 @@ Get-ProviderVdc
 Import-CIVApp
 Import-CIVAppTemplate
 
-[/sourcecode]
+{% endhighlight %}
 
 There are cmdlets for both the vCloud provider admin, AND the vCloud Org admin included in this release, so whether you run vCloud Director internally, or use a public Cloud provider like <a href="http://bluelock.com" target="_blank">Bluelock</a>, this snapin is for you! For your convenience, I've highlighted the cmdlets in the list above that are available to both Org and Provider admins.
 
@@ -84,7 +84,7 @@ So, let's give them a try in a hybrid environment, where I am connected to my lo
 
 To connect as an Org admin, I'll need my username, password, and Org.
 
-[sourcecode language="powershell"]Connect-CIServer -org MyOrg -User Jake -Password cloud[/sourcecode]
+{% highlight powershell %}Connect-CIServer -org MyOrg -User Jake -Password cloud{% endhighlight %}
 
 I've connected to both my internal vSphere environment, and my public cloud provider. So doing a
 

@@ -19,9 +19,9 @@ The following PowerCLI script will go through a particular datastore, looking fo
 
 NOTE: Thanks Dean for testing and the bug fix!
 
-[sourcecode language="powershell" wraplines="false"]
-$datastore = &quot;MyDatastore&quot;
-$viserver = &quot;MyVIServer&quot;
+{% highlight powershell %}
+$datastore = "MyDatastore"
+$viserver = "MyVIServer"
 
 # add PowerCLI snapin
 Add-PSSnapin vmware.vimautomation.core -ErrorAction:SilentlyContinue
@@ -47,11 +47,11 @@ $dsfolders = Get-ChildItem
 
 foreach ($dsfolder in $dsfolders)
 {
-    if (!(test-path &quot;$dsfolder\*.vmx&quot;))
+    if (!(test-path "$dsfolder\*.vmx"))
     {
-        if (test-path &quot;$dsfolder\current.png&quot;)
+        if (test-path "$dsfolder\current.png")
         {
-            remove-item &quot;$dsfolder\current.png&quot;
+            remove-item "$dsfolder\current.png"
             if ((get-childitem .\$dsfolder\* | measure-object).count -lt 1)
             {
                 remove-item $dsfolder
@@ -59,4 +59,4 @@ foreach ($dsfolder in $dsfolders)
         }
     }
 }
-[/sourcecode]
+{% endhighlight %}

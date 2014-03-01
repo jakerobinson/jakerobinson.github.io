@@ -27,7 +27,7 @@ The HTML and CSV output look like this:
 
 Here's the new code, but please leave me a comment if you use this! I'd love to hear about it!
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 #
 # OutlookTimeReport.ps1
@@ -49,14 +49,14 @@ function pick-date()
 {
  $objForm = New-Object Windows.Forms.Form
 
-$objForm.Text = &quot;Select a Date&quot;
+$objForm.Text = "Select a Date"
  $objForm.Size = New-Object Drawing.Size @(190,190)
- $objForm.StartPosition = &quot;CenterScreen&quot;
+ $objForm.StartPosition = "CenterScreen"
 
 $objForm.KeyPreview = $True
 
 $objForm.Add_KeyDown({
- if ($_.KeyCode -eq &quot;Enter&quot;)
+ if ($_.KeyCode -eq "Enter")
  {
  $dtmDate=$objCalendar.SelectionStart
  $objForm.Close()
@@ -64,7 +64,7 @@ $objForm.Add_KeyDown({
  })
 
 $objForm.Add_KeyDown({
- if ($_.KeyCode -eq &quot;Escape&quot;)
+ if ($_.KeyCode -eq "Escape")
  {
  $objForm.Close()
  }
@@ -88,8 +88,8 @@ if ($dtmDate)
 
 if ($pickdates)
 {
- [void] [System.Reflection.Assembly]::LoadWithPartialName(&quot;System.Windows.Forms&quot;)
- [void] [System.Reflection.Assembly]::LoadWithPartialName(&quot;System.Drawing&quot;)
+ [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+ [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
 
  [DateTime] $pickedStart = pick-date
  [DateTime] $pickedEnd = pick-date
@@ -109,7 +109,7 @@ using Microsoft.Office.Interop.Outlook;public class MyOL
  public MAPIFolder GetCalendar(string userName)
  {
  Application oOutlook = new Application();
- NameSpace oNs = oOutlook.GetNamespace(&quot;MAPI&quot;);
+ NameSpace oNs = oOutlook.GetNamespace("MAPI");
  Recipient oRep = oNs.CreateRecipient(userName);
  MAPIFolder calendar = oNs.GetSharedDefaultFolder(oRep, OlDefaultFolders.olFolderCalendar);
  return calendar;
@@ -120,12 +120,12 @@ using Microsoft.Office.Interop.Outlook;public class MyOL
 Add-Type $class -ReferencedAssemblies Microsoft.Office.Interop.Outlook
 
 $outlook = new-object MyOL
-$restriction = &quot;[End] &gt;= '{0}' AND [Start] &lt;= '{1}'&quot; -f $rangeStart.ToString(&quot;g&quot;), $rangeEnd.ToString(&quot;g&quot;)
+$restriction = "[End] &gt;= '{0}' AND [Start] &lt;= '{1}'" -f $rangeStart.ToString("g"), $rangeEnd.ToString("g")
 $seArray = @()
 $categoryMatch = [string]$categories -replace ' ','|'
 $SECalendar = $outlook.GetCalendar($calendar)
 $appointments = $SECalendar.items
-$appointments.Sort(&quot;[Start]&quot;)
+$appointments.Sort("[Start]")
 $appointments.IncludeRecurrences = $true
 $SEappts = $appointments.Restrict($restriction) | where {$_.categories -match $categoryMatch}
 
@@ -136,9 +136,9 @@ $grouped = $SEappts | Group-Object categories
 $table = @()
 
 # Days of the week. Are these language sensitive?
-$dow = @(&quot;Monday&quot;,&quot;Tuesday&quot;,&quot;Wednesday&quot;,&quot;Thursday&quot;,&quot;Friday&quot;)
+$dow = @("Monday","Tuesday","Wednesday","Thursday","Friday")
 # Change hash values to local language if required.
-$dowHash = @{&quot;Monday&quot;=&quot;Monday&quot;; &quot;Tuesday&quot;=&quot;Tuesday&quot;; &quot;Wednesday&quot;=&quot;Wednesday&quot;; &quot;Thursday&quot;=&quot;Thursday&quot;; &quot;Friday&quot;=&quot;Friday&quot;}
+$dowHash = @{"Monday"="Monday"; "Tuesday"="Tuesday"; "Wednesday"="Wednesday"; "Thursday"="Thursday"; "Friday"="Friday"}
 
 # For each category...
 foreach ($group in $grouped)
@@ -147,7 +147,7 @@ foreach ($group in $grouped)
  $row = New-Object PSObject
 
  # Add the category name to the start of our table...
- Add-Member -MemberType NoteProperty -Name &quot;Category&quot; -value $group.name -InputObject $row
+ Add-Member -MemberType NoteProperty -Name "Category" -value $group.name -InputObject $row
 
 # For each work day
  foreach ($day in $dow)
@@ -164,7 +164,7 @@ foreach ($group in $grouped)
 
 # Summary at the end
 $summary = New-Object PSObject
-Add-Member -MemberType NoteProperty -Name &quot;Category&quot; -value &quot;SUMMARY&quot; -InputObject $summary
+Add-Member -MemberType NoteProperty -Name "Category" -value "SUMMARY" -InputObject $summary
 foreach ($day in $dow)
  {
  # Sum up the hours for that category.
@@ -181,17 +181,17 @@ $totalHours = ($SEappts | Measure-Object -Sum -Property duration).sum /60
 
 if ($csv)
 {
- $table | Export-Csv -NoTypeInformation -Path &quot;$HOME\desktop\OutlookTimeReport.csv&quot;
- Invoke-Item &quot;$HOME\desktop\OutlookTimeReport.csv&quot;
+ $table | Export-Csv -NoTypeInformation -Path "$HOME\desktop\OutlookTimeReport.csv"
+ Invoke-Item "$HOME\desktop\OutlookTimeReport.csv"
 }
 else
 {
- $totalpost = &quot;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;TOTAL HOURS:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;$($totalHours)&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;table&gt;&quot;
- $seHTML = $table | ConvertTo-Html -PostContent $totalpost | Out-File &quot;$HOME\desktop\OutlookTimeReport.html&quot;
- Invoke-Item &quot;$HOME\desktop\OutlookTimeReport.html&quot;
+ $totalpost = "&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;TOTAL HOURS:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;$($totalHours)&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;table&gt;"
+ $seHTML = $table | ConvertTo-Html -PostContent $totalpost | Out-File "$HOME\desktop\OutlookTimeReport.html"
+ Invoke-Item "$HOME\desktop\OutlookTimeReport.html"
 }
 
-[/sourcecode]
+{% endhighlight %}
 
 <span style="font-size:11pt;font-family:'Calibri', 'sans-serif';"><!--[if gte vml 1]&gt;-->
  

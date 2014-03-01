@@ -26,26 +26,26 @@ The module uses the current PowerCLI for it's session and API access, and then b
 
 To use the module, simply download the <a href="https://dl.dropbox.com/u/225399/vCloudSnapshots.psm1" target="_blank">.psm1 file</a> and:
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 Import-Module vCloudSnapshots.psm1
 
-[/sourcecode]
+{% endhighlight %}
 
 After that, you'll have access to 4 cmdlets:
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 Get-CISnapshot
 New-CISnapshot
 Remove-CISnapshot
 Set-CISnapshot
 
-[/sourcecode]
+{% endhighlight %}
 
 To get snapshots:
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 # Get vApps with Snapshots
 Get-CIVapp | Get-CISnapshot
@@ -54,26 +54,26 @@ Get-CIVapp | Get-CISnapshot
 Get-CIVM | Get-CISnapshot
 
 # Get Snapshot info for a particular VM
-Get-CIVM &quot;MyVM&quot; | GetCISnapshot
+Get-CIVM "MyVM" | GetCISnapshot
 
-[/sourcecode]
+{% endhighlight %}
 
 It should be noted that all the cmdlets apply to a VM or vApp, so always make sure you're doing a Get-CIVM or Get-CIVapp first.
 
 For example...here's creating, reverting, and removing:
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 # Create a snapshot for a vApp (or all VMs in the vApp, really.)
-Get-CIVApp &quot;MyVApp&quot; | New-CISnapshot
+Get-CIVApp "MyVApp" | New-CISnapshot
 
 # Revert to our snapshot
-Get-CIVApp &quot;MyVApp&quot; | Set-CISnapshot -revertToCurrent
+Get-CIVApp "MyVApp" | Set-CISnapshot -revertToCurrent
 
 # Remove our snapshot
-Get-CIVApp &quot;MyVApp&quot; | Remove-CISnapshot
+Get-CIVApp "MyVApp" | Remove-CISnapshot
 
-[/sourcecode]
+{% endhighlight %}
 
 For more help, just use <span style="color:#0000ff;">Get-Help</span> and the command!
 

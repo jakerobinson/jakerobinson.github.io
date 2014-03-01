@@ -52,7 +52,7 @@ Outputs to HTML report by default, or use <strong>-csv</strong> to output to com
 
 [caption id="attachment_589" align="alignnone" width="269"]<a href="http://geekafterfive.files.wordpress.com/2012/05/snag-0104.png"><img class="size-full wp-image-589" title="CSV output" src="http://geekafterfive.files.wordpress.com/2012/05/snag-0104.png" alt="" width="269" height="183" /></a> CSV output[/caption]
 <h2>...and here's the script!</h2>
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 #
 # OutlookTimeReport.ps1
@@ -74,14 +74,14 @@ function pick-date()
 {
  $objForm = New-Object Windows.Forms.Form
 
-$objForm.Text = &quot;Select a Date&quot;
+$objForm.Text = "Select a Date"
  $objForm.Size = New-Object Drawing.Size @(190,190)
- $objForm.StartPosition = &quot;CenterScreen&quot;
+ $objForm.StartPosition = "CenterScreen"
 
 $objForm.KeyPreview = $True
 
 $objForm.Add_KeyDown({
- if ($_.KeyCode -eq &quot;Enter&quot;)
+ if ($_.KeyCode -eq "Enter")
  {
  $dtmDate=$objCalendar.SelectionStart
  $objForm.Close()
@@ -89,7 +89,7 @@ $objForm.Add_KeyDown({
  })
 
 $objForm.Add_KeyDown({
- if ($_.KeyCode -eq &quot;Escape&quot;)
+ if ($_.KeyCode -eq "Escape")
  {
  $objForm.Close()
  }
@@ -113,8 +113,8 @@ if ($dtmDate)
 
 if ($pickdates)
 {
- [void] [System.Reflection.Assembly]::LoadWithPartialName(&quot;System.Windows.Forms&quot;)
- [void] [System.Reflection.Assembly]::LoadWithPartialName(&quot;System.Drawing&quot;)
+ [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+ [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
 
  [DateTime] $pickedStart = pick-date
  [DateTime] $pickedEnd = pick-date
@@ -134,7 +134,7 @@ using Microsoft.Office.Interop.Outlook;public class MyOL
  public MAPIFolder GetCalendar(string userName)
  {
  Application oOutlook = new Application();
- NameSpace oNs = oOutlook.GetNamespace(&quot;MAPI&quot;);
+ NameSpace oNs = oOutlook.GetNamespace("MAPI");
  Recipient oRep = oNs.CreateRecipient(userName);
  MAPIFolder calendar = oNs.GetSharedDefaultFolder(oRep, OlDefaultFolders.olFolderCalendar);
  return calendar;
@@ -145,41 +145,41 @@ using Microsoft.Office.Interop.Outlook;public class MyOL
 Add-Type $class -ReferencedAssemblies Microsoft.Office.Interop.Outlook
 
 $outlook = new-object MyOL
-$restriction = &quot;[End] &gt;= '{0}' AND [Start] &lt;= '{1}'&quot; -f $rangeStart.ToString(&quot;g&quot;), $rangeEnd.ToString(&quot;g&quot;)
+$restriction = "[End] &gt;= '{0}' AND [Start] &lt;= '{1}'" -f $rangeStart.ToString("g"), $rangeEnd.ToString("g")
 $seArray = @()
 foreach($se in $calendars)
 {
  $seObject = New-Object PSObject
  $SECalendar = $outlook.GetCalendar($se)
  $appointments = $SECalendar.items
- $appointments.Sort(&quot;[Start]&quot;)
+ $appointments.Sort("[Start]")
  $appointments.IncludeRecurrences = $true
  $SEappts = $appointments.Restrict($restriction) | where {$_.categories -match $category}
  $SEhours = ($SEappts | Measure-Object -Sum -Property duration).sum / 60
- Add-Member -MemberType noteproperty -Value $se -Name &quot;Team Member&quot; -InputObject $seObject
- Add-Member -MemberType noteproperty -Value $SEhours -Name &quot;Hours&quot; -InputObject $seObject
+ Add-Member -MemberType noteproperty -Value $se -Name "Team Member" -InputObject $seObject
+ Add-Member -MemberType noteproperty -Value $SEhours -Name "Hours" -InputObject $seObject
  $seArray += $seObject
 }
 $totalHours = ($seArray | measure-object -Sum -Property hours).sum
 $totalsObject = New-Object PSObject
-Add-Member -MemberType noteproperty -Value &quot;TOTAL HOURS&quot; -Name &quot;Team Member&quot; -InputObject $totalsObject
-Add-Member -MemberType noteproperty -Value $totalHours -Name &quot;Hours&quot; -InputObject $totalsObject
+Add-Member -MemberType noteproperty -Value "TOTAL HOURS" -Name "Team Member" -InputObject $totalsObject
+Add-Member -MemberType noteproperty -Value $totalHours -Name "Hours" -InputObject $totalsObject
 $seArray += $totalsObject
 
 if ($csv)
 {
- $seArray | Export-Csv -NoTypeInformation -Path &quot;$HOME\desktop\OutlookTimeReport.csv&quot;
- Invoke-Item &quot;$HOME\desktop\OutlookTimeReport.csv&quot;
+ $seArray | Export-Csv -NoTypeInformation -Path "$HOME\desktop\OutlookTimeReport.csv"
+ Invoke-Item "$HOME\desktop\OutlookTimeReport.csv"
 }
 else
 {
-$seHTML = $seArray | ConvertTo-Html -Body &quot;&lt;/pre&gt;
-&lt;h3&gt;$($category): $($rangeStart.ToString(&quot;MM.dd.yyyy&quot;)) - $($rangeEnd.ToString(&quot;MM.dd.yyyy&quot;))&lt;/h3&gt;
-&lt;pre&gt;&quot;| Out-File &quot;$HOME\desktop\OutlookTimeReport.html&quot;
- Invoke-Item &quot;$HOME\desktop\OutlookTimeReport.html&quot;
+$seHTML = $seArray | ConvertTo-Html -Body "&lt;/pre&gt;
+&lt;h3&gt;$($category): $($rangeStart.ToString("MM.dd.yyyy")) - $($rangeEnd.ToString("MM.dd.yyyy"))&lt;/h3&gt;
+&lt;pre&gt;"| Out-File "$HOME\desktop\OutlookTimeReport.html"
+ Invoke-Item "$HOME\desktop\OutlookTimeReport.html"
 }
 
- [/sourcecode]
+ {% endhighlight %}
 
  
 For more Powershell and Outlook fun, see <a href="http://www.virtu-al.net/2012/05/13/never-miss-an-appointment-again-with-powershell/" target="_blank">Alan's post</a>!</pre>

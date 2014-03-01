@@ -22,19 +22,19 @@ When upgrading vShield Manager, your vShield Edge devices will not be upgraded u
 
 Note: This is a vSphere PowerCLI script should work with both vCloud Director or regular vShield installs.
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 $report = @()
-$VSEs = Get-View -ViewType virtualmachine -Filter @{&quot;name&quot;=&quot;vse&quot;}
+$VSEs = Get-View -ViewType virtualmachine -Filter @{"name"="vse"}
 
 foreach ($vSE in $vSEs)
 {
 
 $vSEObject = New-Object PSObject
- Add-Member -MemberType NoteProperty -Name &quot;Name&quot; -Value $VSE.name -InputObject $vSEObject
- Add-Member -MemberType NoteProperty -Name &quot;Version&quot; -Value $VSE.config.vappconfig.product[0].version -InputObject $vSEObject
- Add-Member -MemberType NoteProperty -Name &quot;Network0&quot; -Value (Get-View -id $VSE.network[0].tostring()).name -InputObject $vSEObject
- Add-Member -MemberType NoteProperty -Name &quot;Network1&quot; -Value (Get-View -id $VSE.network[1].tostring()).name -InputObject $vSEObject
+ Add-Member -MemberType NoteProperty -Name "Name" -Value $VSE.name -InputObject $vSEObject
+ Add-Member -MemberType NoteProperty -Name "Version" -Value $VSE.config.vappconfig.product[0].version -InputObject $vSEObject
+ Add-Member -MemberType NoteProperty -Name "Network0" -Value (Get-View -id $VSE.network[0].tostring()).name -InputObject $vSEObject
+ Add-Member -MemberType NoteProperty -Name "Network1" -Value (Get-View -id $VSE.network[1].tostring()).name -InputObject $vSEObject
 
 $report += $vSEObject
 }
@@ -43,6 +43,6 @@ $highVer = ($report | Sort-Object -Property version -Descending)[0].version
 $oldvSEs = $report | where {$_.version -ne $highVer}
 $oldvSEs | Export-Csv $HOME\Desktop\oldvSEs.csv -NoTypeInformation
 
-[/sourcecode]
+{% endhighlight %}
 
 &nbsp;

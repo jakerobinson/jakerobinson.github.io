@@ -33,74 +33,74 @@ I came up with this idea on accident, when I was playing with the Powershell v3 
 
 Here's what I ran:
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
-Invoke-RestMethod &quot;https://vcloud.example.com/cloud/org/jake&quot; | Out-File C:\users\jake\desktop\vcloudindex.html -encoding UTF8
+Invoke-RestMethod "https://vcloud.example.com/cloud/org/jake" | Out-File C:\users\jake\desktop\vcloudindex.html -encoding UTF8
 
-[/sourcecode]
+{% endhighlight %}
 
 This dumps the HTML from the URL just like wget in Linux.
 
 After that, I started changing out all of the relative HTML links to absolutes. In the following html, I changed the first one to show you an example.
 
-[sourcecode language="html" wraplines="false"]
+{% highlight powershell %}
 
-css/main.css&quot; type=&quot;text/css&quot; rel=&quot;stylesheet&quot; /&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;support/&lt;span class=&quot;&gt;// &lt;![CDATA[
-javascript&lt;/span&gt;/jquery/jquery-1.3.2.min.js&quot; type=&quot;text/javascript&quot;&gt;
+css/main.css" type="text/css" rel="stylesheet" /&gt;
+&lt;script type="text/javascript" src="support/&lt;span class="&gt;// &lt;![CDATA[
+javascript&lt;/span&gt;/jquery/jquery-1.3.2.min.js" type="text/javascript"&gt;
 // ]]&gt;&lt;/script&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;support/&lt;span class=&quot;&gt;// &lt;![CDATA[
-javascript&lt;/span&gt;/upload.js&quot; type=&quot;text/javascript&quot;&gt;
+&lt;script type="text/javascript" src="support/&lt;span class="&gt;// &lt;![CDATA[
+javascript&lt;/span&gt;/upload.js" type="text/javascript"&gt;
 // ]]&gt;&lt;/script&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;support/&lt;span class=&quot;&gt;// &lt;![CDATA[
-javascript&lt;/span&gt;/swfobject.js&quot; type=&quot;text/javascript&quot;&gt;
+&lt;script type="text/javascript" src="support/&lt;span class="&gt;// &lt;![CDATA[
+javascript&lt;/span&gt;/swfobject.js" type="text/javascript"&gt;
 // ]]&gt;&lt;/script&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;support/&lt;span class=&quot;&gt;// &lt;![CDATA[
-javascript&lt;/span&gt;/swfaddress.js&quot; type=&quot;text/javascript&quot;&gt;
+&lt;script type="text/javascript" src="support/&lt;span class="&gt;// &lt;![CDATA[
+javascript&lt;/span&gt;/swfaddress.js" type="text/javascript"&gt;
 // ]]&gt;&lt;/script&gt;
- &lt;script src=&quot;support/javascript/associative-array.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
- &lt;script src=&quot;support/javascript/VMRCConsoleController.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
- &lt;script src=&quot;support/javascript/remoteaccess.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+ &lt;script src="support/javascript/associative-array.js" type="text/javascript"&gt;&lt;/script&gt;
+ &lt;script src="support/javascript/VMRCConsoleController.js" type="text/javascript"&gt;&lt;/script&gt;
+ &lt;script src="support/javascript/remoteaccess.js" type="text/javascript"&gt;&lt;/script&gt;
 
-[/sourcecode]
+{% endhighlight %}
 
 After that, I started running into cookie errors, and apparently Chrome does not load cookies for local pages by default. You can fix this by loading Chrome with --enable-file-cookies, but that seemed like a chore. I simply uploaded the file to my public dropbox folder and got the URL for the file.
 
 At that point, I was accessing the file over the internet, but the flash was not loading. After a bit of investigation, I discovered this line:
 
-[sourcecode language="javascript"]
+{% highlight powershell %}
 
-{  wmode: &quot;opaque&quot;, allowScriptAccess: &quot;sameDomain&quot; },
+{  wmode: "opaque", allowScriptAccess: "sameDomain" },
 
-[/sourcecode]
+{% endhighlight %}
 
 A quick google search revealed I could change "sameDomain" to "always." I made the change and reloaded the page. Flash worked and I could log in!!!
 
 So now I could focus my attention on that browser error. I did a find for the text of the error, and backtracked it to this function:
 
-[sourcecode language="javascript"]
+{% highlight powershell %}
 
 function onPageLoad() {
  if (isSupportedBrowser()) {
  initializeFlash();
  } else {
- $(&quot;#browserWarning&quot;).show();
- $(&quot;#flashWarning&quot;).hide();
- $(&quot;#cookieWarning&quot;).hide();
+ $("#browserWarning").show();
+ $("#flashWarning").hide();
+ $("#cookieWarning").hide();
  }
  }
 
-[/sourcecode]
+{% endhighlight %}
 
 Easy fix. I simply removed the logic of the onPageLoad() function to this:
 
-[sourcecode language="javascript"]
+{% highlight powershell %}
 
 function onPageLoad() {
  initializeFlash();
  }
 
-[/sourcecode]
+{% endhighlight %}
 
 I reloaded the page, anxious to see if that fixed it....SUCCESS!
 

@@ -21,14 +21,14 @@ vCloud Director gives Organization users some granular control over what level o
 
 The following code grabs a vApp's current access settings, and allows a user to modify the vApp.
 
-[sourcecode language="Powershell"]
+{% highlight powershell %}
 
 # Get our required Objects
-$vapp = Get-CIVApp &quot;My vApp&quot;
-$user = Get-CIUser &quot;UserToBeAdded&quot;
+$vapp = Get-CIVApp "My vApp"
+$user = Get-CIUser "UserToBeAdded"
 
 # Access Level can be one of: ReadOnly,Change,FullControl
-$accessLevel = &quot;Change&quot;
+$accessLevel = "Change"
 
 # Get current access policy from vApp
 $access = $vapp.ExtensionData.GetControlAccess()
@@ -48,7 +48,7 @@ $newAccess.AccessLevel = $accessLevel
 
 # Insert user href
 $newAccess.Subject.Href = $user.ExtensionData.Href
-$newAccess.Subject.Type = &quot;application/vnd.vmware.admin.user+xml&quot;
+$newAccess.Subject.Type = "application/vnd.vmware.admin.user+xml"
 
 # Add new access to vApp access settings object
 $access.AccessSettings.AccessSetting += $newAccess
@@ -56,7 +56,7 @@ $access.AccessSettings.AccessSetting += $newAccess
 #Send new Access config
 $vapp.ExtensionData.ControlAccess($access)
 
-[/sourcecode]
+{% endhighlight %}
 
 <a href="http://geekafterfive.files.wordpress.com/2012/06/snag-0148.png"><img class="alignnone size-full wp-image-654" title="vCloud vApp Sharing" src="http://geekafterfive.files.wordpress.com/2012/06/snag-0148.png" alt="" width="490" height="346" /></a>
 

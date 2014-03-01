@@ -24,11 +24,11 @@ The task in this case was to send an email to all Org users to remind them of th
 
 Probably the most interesting thing I find about this code is that it can be used in either a systems admin role, or an organization admin role.
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
-$mailServer = &quot;mail.example.com&quot;
-$users = Get-CIUser # use -Org &quot;OrgName&quot; if connected to system Org
-$VApps = Get-CIVApp # use -Org &quot;OrgName&quot; if connected to system Org
+$mailServer = "mail.example.com"
+$users = Get-CIUser # use -Org "OrgName" if connected to system Org
+$VApps = Get-CIVApp # use -Org "OrgName" if connected to system Org
 
 foreach ($user in $users)
 {
@@ -36,12 +36,12 @@ foreach ($user in $users)
  $ownerVApps = $VApps | where {$_.owner -eq $user}
  $vapps | ForEach-Object {$counter += $_.extensiondata.children.vm.count}
 
-$mailbody = &quot;Greetings, You currently have $counter virtual machines in Organization: $($user.Org)&quot;
+$mailbody = "Greetings, You currently have $counter virtual machines in Organization: $($user.Org)"
 
-Send-MailMessage -SmtpServer $mailServer -To $user.email -From &quot;PowerCLI@example.com&quot; -Body $mailbody
+Send-MailMessage -SmtpServer $mailServer -To $user.email -From "PowerCLI@example.com" -Body $mailbody
 
 }
 
-[/sourcecode]
+{% endhighlight %}
 
 &nbsp;

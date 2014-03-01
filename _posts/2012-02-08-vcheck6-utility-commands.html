@@ -24,44 +24,44 @@ If you are not the video watching type, here are some helpful tips:
 
 <strong>1. In order to access the vCheck Utility Commands. You must 'dot-source' the file:</strong>
 
-[sourcecode language="powershell"]. .\vCheckUtils.ps1[/sourcecode]
+{% highlight powershell %}. .\vCheckUtils.ps1{% endhighlight %}
 
 That's dot[space]dot, for those reading this on a mobile device. ;)
 
 <strong>2. The list of commands will display. The basic functionality is as follows:</strong>
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
 Get-vCheckCommand # Get commands found in vCheckUtils.ps1
 Get-vCheckPlugin # Retrieve list of plugins
 Add-vCheckPlugin # Add plugin from Virtu-Al.net
 Remove-vCheckPlugin  # Remove an installed plugin
-[/sourcecode]
+{% endhighlight %}
 
 <strong>3. Some common uses:</strong>
 
 List Plugins not installed(available from Virtu-al.net repository):
 
-[sourcecode language="powershell"]Get-VCheckPlugin -notinstalled[/sourcecode]
+{% highlight powershell %}Get-VCheckPlugin -notinstalled{% endhighlight %}
 
 Get a plugin by name:
 
-[sourcecode language="powershell"]Get-VCheckPlugin -name &quot;Plugin Name&quot;[/sourcecode]
+{% highlight powershell %}Get-VCheckPlugin -name "Plugin Name"{% endhighlight %}
 
 Get a plugin by name and install it from the Virtu-Al.net repository:
 
-[sourcecode language="powershell"]Get-VCheckPlugin -name &quot;Plugin Name | Add-VCheckPlugin[/sourcecode]
+{% highlight powershell %}Get-VCheckPlugin -name "Plugin Name | Add-VCheckPlugin{% endhighlight %}
 
 Get a plugin by name and UNINSTALL it:
 
-[sourcecode language="powershell"]Get-VCheckPlugin -name &quot;Plugin Name | Add-VCheckPlugin[/sourcecode]
+{% highlight powershell %}Get-VCheckPlugin -name "Plugin Name | Add-VCheckPlugin{% endhighlight %}
 
 Get all plugins that are NOT installed, and install them (warning, lots of plugins!):
 
-[sourcecode language="powershell"]Get-VCheckPlugin -notinstalled | Add-VCheckPlugin[/sourcecode]
+{% highlight powershell %}Get-VCheckPlugin -notinstalled | Add-VCheckPlugin{% endhighlight %}
 
 Need more help?
 
-[sourcecode language="powershell"]Get-Help Get-VCheckPlugin[/sourcecode]
+{% highlight powershell %}Get-Help Get-VCheckPlugin{% endhighlight %}
 
 &nbsp;

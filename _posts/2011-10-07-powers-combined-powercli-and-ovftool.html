@@ -14,7 +14,7 @@ meta:
   _wpas_mess: ! 'Exporting VMs with PowerCLI and OVFtool:'
   _wpas_done_twitter: '1'
 ---
-[caption id="attachment_127" align="alignleft" width="249" caption="&quot;By your powers combined!!!&quot;"]<img class="size-full wp-image-127" title="The Planeteers" src="http://geekafterfive.files.wordpress.com/2011/10/theplaneteers.jpg" alt="&quot;By your powers combined!!!&quot;" width="249" height="201" />[/caption]
+[caption id="attachment_127" align="alignleft" width="249" caption=""By your powers combined!!!""]<img class="size-full wp-image-127" title="The Planeteers" src="http://geekafterfive.files.wordpress.com/2011/10/theplaneteers.jpg" alt=""By your powers combined!!!"" width="249" height="201" />[/caption]
 
 This post will show how to combine the automation abilities of PowerCLI with OVFTool, but first:
 
@@ -28,11 +28,11 @@ While OVF is a great standard, there can be issues (encoding, unsupported metada
 
 PowerCLI has a pretty good method for exporting vApps (Export-vApp), but not Virtual Machines. The simple and effective work-around is to simply create a new vApp, move/clone your VM to the vApp, export the vApp using the Export-vApp cmdlet. It works great for vSphere-&gt;;vSphere, but again...not for vSphere-&gt;;vCloud.
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 New-VApp test02 -Location cluster01
 Move-VM delta -Destination test02
 Export-VApp test02 -Destination C:\users\jake\desktop
-[/sourcecode]
+{% endhighlight %}
 
 Uploading the OVF produced by the code above results in the following error:
 
@@ -45,7 +45,7 @@ Use OVFtool. It uploads perfectly to vCloud AND I can directly export the VM wit
 
 <strong>So here's the code:</strong>
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 function Export-VM
 {
     param
@@ -54,7 +54,7 @@ function Export-VM
         [parameter(Mandatory=$true)][String] $destination
     )
 
-    $ovftoolpaths = (&amp;quot;C:\Program Files (x86)\VMware\VMware OVF Tool\ovftool.exe&amp;quot;,&amp;quot;C:\Program Files\VMware\VMware OVF Tool\ovftool.exe&amp;quot;)
+    $ovftoolpaths = ("C:\Program Files (x86)\VMware\VMware OVF Tool\ovftool.exe","C:\Program Files\VMware\VMware OVF Tool\ovftool.exe")
     $ovftool = ''
 
     foreach ($ovftoolpath in $ovftoolpaths)
@@ -66,18 +66,18 @@ function Export-VM
     }
     if (!$ovftool)
     {
-        write-host -ForegroundColor red &amp;quot;ERROR: OVFtool not found in it's standard path.&amp;quot;
-        write-host -ForegroundColor red &amp;quot;Edit the path variable or download ovftool here: http://www.vmware.com/support/developer/ovf/&amp;quot;
+        write-host -ForegroundColor red "ERROR: OVFtool not found in it's standard path."
+        write-host -ForegroundColor red "Edit the path variable or download ovftool here: http://www.vmware.com/support/developer/ovf/"
     }
     else
     {
         $moref = $vm.extensiondata.moref.value
         $session = Get-View -Id SessionManager
         $ticket = $session.AcquireCloneTicket()
-        &amp;amp; $ovftool &amp;quot;--I:sourceSessionTicket=$($ticket)&amp;quot; &amp;quot;vi://$($defaultviserver.name)?moref=vim.VirtualMachine:$($moref)&amp;quot; &amp;quot;$($destination)$($vm.name).ovf&amp;quot;
+        &amp;amp; $ovftool "--I:sourceSessionTicket=$($ticket)" "vi://$($defaultviserver.name)?moref=vim.VirtualMachine:$($moref)" "$($destination)$($vm.name).ovf"
     }
 }
-[/sourcecode]
+{% endhighlight %}
 
 <strong>Lines 26-29 are where the magic happens.</strong>
 Line 26: Get our Moref value for the VM.

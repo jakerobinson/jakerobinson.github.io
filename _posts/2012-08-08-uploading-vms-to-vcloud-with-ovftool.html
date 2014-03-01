@@ -25,9 +25,9 @@ To do this, OVFtool simply requires a source (VMX or OVF), and a destination (a 
 
 The vCloud locator looks something like this:
 
-[sourcecode language="text" wraplines="false"]
+{% highlight powershell %}
 vcloud://username:password@host:port?org=name_of_org&amp;vapp=name_of_deployed_vapp&amp;catalog=name_of_catalog&amp;vappTemplate=name_of_vapp_template_in_catalog&amp;vdc=name_of_vdc
-[/sourcecode]
+{% endhighlight %}
 
 As you can see, the vCloud Locator is a URL with all of the information needed to upload your OVF.
 
@@ -39,17 +39,17 @@ This is most likely because of the special characters ovftool uses in the URL (&
 
 I tried quoting out the vCloud Locator several different ways to get it to understand, but resorted to Powershell to save the day once again.
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
-$vCloudLocator = &quot;vcloud://jake:password@vcloud.example.com:443?org=jake&amp;vappTemplate=MyTemplate&amp;catalog=private&quot;
+$vCloudLocator = "vcloud://jake:password@vcloud.example.com:443?org=jake&amp;vappTemplate=MyTemplate&amp;catalog=private"
 
-$sourceFile = &quot;C:\jake\MyVM.vmx&quot;
+$sourceFile = "C:\jake\MyVM.vmx"
 
-$ovftool = &quot;C:\Program Files\VMware\VMware OVF Tool\ovftool.exe&quot;
+$ovftool = "C:\Program Files\VMware\VMware OVF Tool\ovftool.exe"
 
 &amp; $ovftool $sourceFile $vCloudLocator
 
-[/sourcecode]
+{% endhighlight %}
 
 Powershell treats the characters are part of the string, so we just simply pass the string as a parameter to OVFtool.
 
