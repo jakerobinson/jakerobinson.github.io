@@ -196,9 +196,10 @@ $networkConfigSection.networkConfig[0].configuration.features
 Here's what the natRouted network features look like in Powershell. I did a gettype() afterwards to show you the object types for each service.
 
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png"><img class="size-full wp-image-560 " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="SNAG-0091" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png" alt="" width="490" height="225" /></a>
-The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/FirewallServiceType.html" target="_blank">Firewall Service</a>
 
-This is really handy if you have a spreadsheet full of rules, or want to add an entire range of IPs (which The vCloud Director UI and API do not support that at this time.) As stated above, the firewall service is added by default in a new natRouted network. By default it's set to deny all inbound.
+<p>The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/FirewallServiceType.html" target="_blank">Firewall Service</a>
+
+This is really handy if you have a spreadsheet full of rules, or want to add an entire range of IPs (which The vCloud Director UI and API do not support that at this time.) As stated above, the firewall service is added by default in a new natRouted network. By default it's set to deny all inbound.</p>
 
 {% highlight powershell%}
 $fwService = New-Object vmware.vimautomation.cloud.views.firewallservice
@@ -239,7 +240,7 @@ $fwService.FirewallRule[1].sourceip = "Any"
 $fwService.FirewallRule[1].direction = "in"
 {% endhighlight %}
 
-If you are adding the firewall service to a new network, just paste the above code into the creation code. If you are adding to an existing network, you'll need some additional code. Warning, this currently deletes the old ruleset. This was meant to add firewall service where there was none before:
+<p>If you are adding the firewall service to a new network, just paste the above code into the creation code. If you are adding to an existing network, you'll need some additional code. Warning, this currently deletes the old ruleset. This was meant to add firewall service where there was none before:</p>
 
 {% highlight powershell%}
 $vappName = "My vApp"
@@ -272,30 +273,30 @@ $dhcpService.IpRange.StartAddress = "192.168.2.2"
 $dhcpService.IpRange.EndAddress = "192.168.2.50"
 {% endhighlight %}
 
-Like the firewall service, DHCP is automatically added to a new a new network, but is set to disabled. If you want to use this code to add DHCP to an existing network, you'll just need to modify the existing service, or remove the old service and add this one. You will also need to omit the NAT service section when updating an existing network or you'll encounter an error.
+<p>Like the firewall service, DHCP is automatically added to a new a new network, but is set to disabled. If you want to use this code to add DHCP to an existing network, you'll just need to modify the existing service, or remove the old service and add this one. You will also need to omit the NAT service section when updating an existing network or you'll encounter an error.</p>
 
-The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/NatServiceType.html" target="_blank">Nat Service</a>
+<p>The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/NatServiceType.html" target="_blank">Nat Service</a></p>
 
-If the NAT service box is checked (and it is by default), then the NatService will already be enabled and the NatService object will be there.
+<p>If the NAT service box is checked (and it is by default), then the NatService will already be enabled and the NatService object will be there.</p>
 
-The <em>NatType</em> allows you to pick: ipTranslation and portForwarding. You must choose one or the other. :P
-
-There is also a <em>policy</em>, which lets you choose what traffic will NAT (all, or inbound only): allowTraffic, or allowTrafficIn
-
-Unfortunately, the NAT service is not yet fully implemented in the .NET SDK/PowerCLI, so you'll have to go straight REST API on this one...
-
-Before we do, it's important to know the different NAT rule types:
-
-<em>OneToOneBasicRule</em>: This simply maps an internal IP to an External IP. This is what I typically think of as a Static, or 1:1 NAT.
-
-<em>OneToOneVmRule</em>: This maps a specific VM Nic to an external address. This is helpful if you change your internal IP and don't want to fiddle with NAT rules at the same time.
-
-<em>PortForwardingRule</em>: Also a simple mapping rule to map a port on the external IP to an internal IP address.
-
-<em>VmRule</em>: Odd naming, but it's port forwarding to the VM Nic, rather than an IP address.
-
-Ok, so let's take a peek at our NAT rules using Powershell with the help of System.Net.Webclient:
-
+<p>The <em>NatType</em> allows you to pick: ipTranslation and portForwarding. You must choose one or the other. :P
+</p>
+<p>There is also a <em>policy</em>, which lets you choose what traffic will NAT (all, or inbound only): allowTraffic, or allowTrafficIn
+</p>
+<p>Unfortunately, the NAT service is not yet fully implemented in the .NET SDK/PowerCLI, so you'll have to go straight REST API on this one...
+</p>
+<p>Before we do, it's important to know the different NAT rule types:
+</p>
+<p><em>OneToOneBasicRule</em>: This simply maps an internal IP to an External IP. This is what I typically think of as a Static, or 1:1 NAT.
+</p>
+<p><em>OneToOneVmRule</em>: This maps a specific VM Nic to an external address. This is helpful if you change your internal IP and don't want to fiddle with NAT rules at the same time.
+</p>
+<p><em>PortForwardingRule</em>: Also a simple mapping rule to map a port on the external IP to an internal IP address.
+</p>
+<p><em>VmRule</em>: Odd naming, but it's port forwarding to the VM Nic, rather than an IP address.
+</p>
+<p>Ok, so let's take a peek at our NAT rules using Powershell with the help of System.Net.Webclient:
+</p>
 {% highlight powershell%}
 $vApp = Get-CIVApp "vapp network testing"
 $vAppNetworkName = "natRouted"
@@ -311,10 +312,10 @@ $webclient.Headers.Add("accept",$netConfType)
 &lt;pre&gt;
 {% endhighlight %}
 
-Basically, we just downloaded the XML representation of the NetworkConfigSection, bypassing the .NET SDK and communicating directly to the vCloud API. REST APIs ROCK.
-
-We can now drill down to our Nat Rules:
-
+<p>Basically, we just downloaded the XML representation of the NetworkConfigSection, bypassing the .NET SDK and communicating directly to the vCloud API. REST APIs ROCK.
+</p>
+<p>We can now drill down to our Nat Rules:
+</p>
 {% highlight powershell%}
 ($netConfXML.NetworkConfigSection.NetworkConfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.natrule
 {% endhighlight %}
@@ -323,8 +324,8 @@ This will return something like:
 
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png"><img class="size-full wp-image-569" title="SNAG-0093" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png" alt="" width="88" height="73" /></a>
 
-You'll need to drill down one level further to view the rules. I am going to use a foreach to show all of them:
-
+<p>You'll need to drill down one level further to view the rules. I am going to use a foreach to show all of them:
+</p>
 {% highlight powershell%}
 ($netConfXML.NetworkConfigSection.NetworkConfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.natrule | foreach{$_.vmrule}
 {% endhighlight %}
@@ -333,8 +334,8 @@ You'll need to drill down one level further to view the rules. I am going to use
 
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png"><img class="size-full wp-image-570" title="SNAG-0094" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png" alt="" width="439" height="206" /></a>
 
-So, now we can GET our NAT rules, how to we SET them? We have to get a bit more complicated and use [System.Net.Webrequest]. This is an example of creating a new NAT rule for port translation. OneToOne rules will be a bit different, so again, this is purely for example. If you need something specific and can't figure it out, I'd be glad to help.
-
+<p>So, now we can GET our NAT rules, how to we SET them? We have to get a bit more complicated and use [System.Net.Webrequest]. This is an example of creating a new NAT rule for port translation. OneToOne rules will be a bit different, so again, this is purely for example. If you need something specific and can't figure it out, I'd be glad to help.
+</p>
 {% highlight powershell%}
 $NatPort = "53"
 $natRule = ($netConfXML.NetworkConfigSection.Networkconfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.natrule[0].clonenode(1)
@@ -365,9 +366,9 @@ $response.close()
 {% endhighlight %}
 &nbsp;
 
-The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/StaticRoutingServiceType.html" target="_blank">StaticRouting Service</a>
+<p>The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/StaticRoutingServiceType.html" target="_blank">StaticRouting Service</a>
 
-The Static Routing service controls routing within the vShield Edge.
+The Static Routing service controls routing within the vShield Edge.</p>
 
 {% highlight powershell%}
 $routeService = New-Object vmware.vimautomation.cloud.views.staticroutingservice
@@ -380,8 +381,9 @@ $routeService.StaticRoute[0].nexthopip = "192.168.2.1"
 $routeService.StaticRoute[0].interface = "External"
 {% endhighlight %}
 
-Again, if you are adding this to an existing network, you'll need to omit the Nat Service, or you will encounter an error.
-
+<p>Again, if you are adding this to an existing network, you'll need to omit the Nat Service, or you will encounter an error.
+</p>
 &nbsp;
 <h3><span style="color:#3366ff;">Wrap up...</span></h3>
-WHEW, that's all I have for now. I like answering questions, so please post in the comments or get me on twitter.
+<p>WHEW, that's all I have for now. I like answering questions, so please post in the comments or get me on twitter.
+</p>
