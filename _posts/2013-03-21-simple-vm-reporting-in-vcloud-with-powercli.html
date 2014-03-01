@@ -28,8 +28,8 @@ $objects = @()
 foreach($vm in $vms)
 {
  $hardware = $vm.ExtensionData.GetVirtualHardwareSection()
- $diskMB = (($hardware.Item | where {$_.resourcetype.value -eq &quot;17&quot;}) | %{$_.hostresource[0].anyattr[0].&quot;#text&quot;} | Measure-Object -Sum).sum
- $row = New-Object PSObject -Property @{&quot;vapp&quot; = $vm.vapp; &quot;name&quot;=$vm.Name;&quot;cpuCount&quot;=$vm.CpuCount;&quot;memoryGB&quot;=$vm.MemoryGB;&quot;storageGB&quot;=($diskMB/1024)}
+ $diskMB = (($hardware.Item | where {$_.resourcetype.value -eq "17"}) | %{$_.hostresource[0].anyattr[0]."#text"} | Measure-Object -Sum).sum
+ $row = New-Object PSObject -Property @{"vapp" = $vm.vapp; "name"=$vm.Name;"cpuCount"=$vm.CpuCount;"memoryGB"=$vm.MemoryGB;"storageGB"=($diskMB/1024)}
  $objects += $row
 }
 

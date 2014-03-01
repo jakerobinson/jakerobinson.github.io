@@ -28,14 +28,14 @@ There has been very good coverage and code samples for working with Metadata in 
 </ol>
 For more instruction on Metadata in the vCloud API, read <a href="http://pubs.vmware.com/vcd-51/index.jsp?topic=%2Fcom.vmware.vcloud.api.doc_51%2FGUID-8D8C68F0-AC63-4134-A57E-326E510FC690.html" target="_blank">"Working with Object Metadata"</a> in the vCloud Programming Guide.
 <h3><span style="color:#3366ff;">PowerCLI 5.1 R2 example:</span></h3>
-<div style="text-align:Left;font-family:Segoe UI;font-style:normal;font-weight:normal;font-size:12px;color:#000000;">
-<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vapp </span><span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">Get-CIVapp </span><span style="color:#8b0000;">"MyVApp"</span></p>
-<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata </span><span style="color:#a9a9a9;">= </span><span style="color:#ff4500;">$vapp</span><span style="color:#a9a9a9;">.</span>extensiondata<span style="color:#a9a9a9;">.</span>GetMetadata()</p>
-<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata</span><span style="color:#a9a9a9;">.</span>MetadataEntry <span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.VimAutomation.Cloud.Views.MetadataEntry</span></p>
-<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#006400;"># I don't have any other metadata, so index is [0].</span></p>
-<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata</span><span style="color:#a9a9a9;">.</span>MetadataEntry<span style="color:#a9a9a9;">[</span><span style="color:#800080;">0</span><span style="color:#a9a9a9;">].</span>Key <span style="color:#a9a9a9;">= </span><span style="color:#8b0000;">"Jake"</span></p>
-<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata</span><span style="color:#a9a9a9;">.</span>MetadataEntry<span style="color:#a9a9a9;">[</span><span style="color:#800080;">0</span><span style="color:#a9a9a9;">].</span>TypedValue <span style="color:#a9a9a9;">= </span><span style="color:#0000ff;">New-Object </span><span style="color:#8a2be2;">VMware.VimAutomation.Cloud.Views.MetadataStringValue</span></p>
-<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$metadata</span><span style="color:#a9a9a9;">.</span>MetadataEntry<span style="color:#a9a9a9;">[</span><span style="color:#800080;">0</span><span style="color:#a9a9a9;">].</span>TypedValue<span style="color:#a9a9a9;">.</span>Value <span style="color:#a9a9a9;">= </span><span style="color:#8b0000;">"vCloudNerd"</span></p>
-<p style="font-family:Lucida Console;margin:0;background-color:#ffffff;"><span style="color:#ff4500;">$vapp</span><span style="color:#a9a9a9;">.</span>ExtensionData<span style="color:#a9a9a9;">.</span>CreateMetadata(<span style="color:#ff4500;">$metadata</span>)</p>
 
-</div>
+{% highlight powershell %}
+$vapp = Get-CIVapp "MyVApp"
+$metadata = $vapp.extensiondata.GetMetadata()
+$metadata.MetadataEntry = New-Object VMware.VimAutomation.Cloud.Views.MetadataEntry
+# I don't have any other metadata, so index is [0].
+$metadata.MetadataEntry[0].Key = "Jake"
+$metadata.MetadataEntry[0].TypedValue = New-Object VMware.VimAutomation.Cloud.Views.MetadataStringValue
+$metadata.MetadataEntry[0].TypedValue.Value = "vCloudNerd"
+$vapp.ExtensionData.CreateMetadata($metadata)
+{% endhighlight %}

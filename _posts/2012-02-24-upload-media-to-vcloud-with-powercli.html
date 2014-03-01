@@ -34,11 +34,11 @@ Enjoy!
 
 &nbsp;
 
-[sourcecode language="powershell"]
+{% highlight powershell %}
 
-$isoFolder = &quot;C:\MyISOs&quot;
-$vdcName = &quot;MyVDC&quot;
-$catalogName = &quot;MyCatalog&quot;
+$isoFolder = "C:\MyISOs"
+$vdcName = "MyVDC"
+$catalogName = "MyCatalog"
 
 # create / delete a cloud media object
 Get-ChildItem $isoFolder | %{
@@ -77,6 +77,6 @@ foreach ($noCatMedia in $mediaList)
  $catalog.extensiondata.createcatalogitem($catitem)
 }
 
-[/sourcecode]
+{% endhighlight %}
 
 &nbsp;

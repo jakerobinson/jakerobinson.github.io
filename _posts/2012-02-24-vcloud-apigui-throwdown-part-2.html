@@ -20,7 +20,7 @@ meta:
 ---
 <a href="http://geekafterfive.files.wordpress.com/2012/02/punchout1.png"><img class=" wp-image-373 alignleft" title="punchout1" src="http://geekafterfive.files.wordpress.com/2012/02/punchout1.png" alt="" width="282" height="246" /></a>
 
-In the first part of  <a title="vCloud API/GUI Throwdown!" href="http://geekafterfive.com/2011/11/01/vcloud-apigui-throwdown/">vCloud API/GUI Throwdown</a>, we watched in awe as the API completely pummeled the GUI. I gave you some hints in part 1 to do this on your own with the API, but this time around we're going to use PowerCLI 5.0.1 and the new vCloud Snap-in!
+<p>In the first part of  <a title="vCloud API/GUI Throwdown!" href="http://geekafterfive.com/2011/11/01/vcloud-apigui-throwdown/">vCloud API/GUI Throwdown</a>, we watched in awe as the API completely pummeled the GUI. I gave you some hints in part 1 to do this on your own with the API, but this time around we're going to use PowerCLI 5.0.1 and the new vCloud Snap-in!</p>
 
 <span style="color:#ff0000;">Requirements:</span>
 <ul>
@@ -28,16 +28,16 @@ In the first part of  <a title="vCloud API/GUI Throwdown!" href="http://geekafte
 	<li><span style="color:#ff0000;">PowerCLI 5.0.1</span></li>
 </ul>
 <h3>Hot Cloning vApps</h3>
-This will make an <strong>EXACT</strong> copy of the vApp, MAC addresses and all. If you don't want that, you'll need to make some modifications. Hit the comments for specific requests.
+<p>This will make an <strong>EXACT</strong> copy of the vApp, MAC addresses and all. If you don't want that, you'll need to make some modifications. Hit the comments for specific requests.</p>
 
-[sourcecode language="powershell" wraplines="false"]
+{% highlight powershell %}
 
 Add-PSSnapin vmware.vimautomation.cloud
 Connect-CIServer vcloud.example.com -org MyOrg -User MyUser -Password MyPassword
 
-$sourceName = &amp;quot;SourceVApp&amp;quot;
-$cloneName = &amp;quot;NewVAppName&amp;quot;
-$vdcName = &amp;quot;MyOrgVdcName&amp;quot;
+$sourceName = "SourceVApp"
+$cloneName = "NewVAppName"
+$vdcName = "MyOrgVdcName"
 
 $sourceVapp = Get-CIVApp $sourceName
 $vdc = Get-OrgVdc $vdcName
@@ -51,94 +51,94 @@ $cloneParams.Name = $cloneName
 
 $vdc.ExtensionData.CloneVApp($cloneParams)
 
-[/sourcecode]
+{% endhighlight %}
 
-<strong>Lines 1-2:</strong> Add Snap-in and connect.
+<p><strong>Lines 1-2:</strong> Add Snap-in and connect.
 <strong>Lines 4-6:</strong> Source, Destination, and vDC names.
 <strong>Lines 8-9:</strong> Get vApp and vDC objects
 <strong>Line 10:</strong> Create a CloneVAppParams Object. This is all the info vCloud needs to clone the vApp.
 <strong>Line 11:</strong> Create a InstantiationParams Object. This is a container object for the OVF data.
 <strong>Line 13:</strong> Add OVF Data to InstantiationParams Object. Notice I picked specific sections of the OVF [0,1,3]. Section 2 is NetworkConnectionSection. We just need Section 3: NetworkConfigSection. Attempting to clone Section 2 will cause it to fail. I'll deep dive later. :D <span style="color:#ff6600;">EDIT: If you are not utilizing vApp Networks, you should only copy sections [0,1]. I will follow up with another blog post dedicated to cloning and customizing vApps.</span>
 <strong>Line 14-16:</strong> Put our InstantiationParams and other info into our CloneVAppParams object.
-<strong>Line 18:</strong> Clone!
+<strong>Line 18:</strong> Clone!</p>
 
-The below image was my source vApp....
+<p>The below image was my source vApp....</p>
 
 [caption id="attachment_405" align="alignnone" width="490" caption="My source vApp."]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0022.png"><img class="size-full wp-image-405 " title="SNAG-0022" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0022.png" alt="" width="490" height="211" /></a>[/caption]
 
 [caption id="attachment_406" align="alignnone" width="490" caption="cloneVApp method return."]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0023.png"><img class="size-full wp-image-406" title="SNAG-0023" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0023.png" alt="" width="490" height="147" /></a>[/caption]
 
 [caption id="attachment_407" align="alignnone" width="490" caption="Dolly, My cloned Sheep! Er, um... vApp!"]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0024.png"><img class="size-full wp-image-407" title="SNAG-0024" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0024.png" alt="" width="490" height="244" /></a>[/caption]
-<h3></h3>
+
 <h3>Hot Modify connected VM network</h3>
-This will change the network, and assigned IP in vCloud Director if you are using a Static IP Pool address. This does NOT change the guest address. You'll have to change it manually in the OS or force re-customization.
+<p>This will change the network, and assigned IP in vCloud Director if you are using a Static IP Pool address. This does NOT change the guest address. You'll have to change it manually in the OS or force re-customization.</p>
 
-[sourcecode language="powershell" wraplines="false"]
+{% highlight powershell %}
 
-$newNetworkName = &amp;quot;MyNewNetwork&amp;quot;
+$newNetworkName = "MyNewNetwork"
 
 $vm = Get-CIVM MyCIVM
 
 ($vm.ExtensionData.Section | where {$_ -is [VMware.VimAutomation.Cloud.Views.NetworkConnectionSection]}).NetworkConnection[0].network = $newNetworkName
 ($vm.ExtensionData.Section | where {$_ -is [VMware.VimAutomation.Cloud.Views.NetworkConnectionSection]}).updateServerData()
 
-[/sourcecode]
+{% endhighlight %}
 
-<strong>Line 1:</strong> The name of the network you want your VM connected to.
+<p><strong>Line 1:</strong> The name of the network you want your VM connected to.
 <strong>Line 3:</strong> Get the VM.
 <strong>Line 5:</strong>  This is a long line. It basically says Get the Network Connection OVF section and assign the first NIC to the new network.
-<strong>Line 7:</strong> UpdateServerData() This sends the updated changes to vCloud Director. Cool, eh?
+<strong>Line 7:</strong> UpdateServerData() This sends the updated changes to vCloud Director. Cool, eh?</p>
 
-[caption id="attachment_399" align="alignnone" width="490" caption="Before...Connected to vAppNetwork2 with an IP on the .2 subnet."]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0029.png"><img class="size-full wp-image-399" title="SNAG-0029" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0029.png" alt="" width="490" height="149" /></a>[/caption]
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0029.png"><img class="size-full wp-image-399" title="SNAG-0029" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0029.png" alt="" width="490" height="149" /></a>
 
-[caption id="attachment_400" align="alignnone" width="490" caption="After...vAppNetwork3, and an IP on the .3 subnet!"]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0030.png"><img class="size-full wp-image-400" title="SNAG-0030" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0030.png" alt="" width="490" height="146" /></a>[/caption]
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0030.png"><img class="size-full wp-image-400" title="SNAG-0030" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0030.png" alt="" width="490" height="146" /></a>
 
-<span style="color:#008000;">(Jake tip: You can use UpdateViewData() to refresh the VM with any data that may have changed. No need to re-'Get' the VM!)</span>
+<p><span style="color:#008000;">(Jake tip: You can use UpdateViewData() to refresh the VM with any data that may have changed. No need to re-'Get' the VM!)</span></p>
 <h3>Hot Modify Disk Size</h3>
-This one is also a bit ugly. I'll try to clean it up later, but it works. ;)
+<p>This one is also a bit ugly. I'll try to clean it up later, but it works. ;)</p>
 
-Also, I shouldn't need to tell you that <span style="color:#ff0000;"><strong>THIS IS DANGEROUS</strong></span>. For giggles, I tried to set it to a lower size. The command threw an exception, but vCloud still displays it at the lower size. I'll update after I check if vSphere actually allowed this (I'd be surprised). If not, it'll be a bug report to VMware. Either way, make sure you are GROWING the disk. Mind the zeros.
+<p>Also, I shouldn't need to tell you that <span style="color:#ff0000;"><strong>THIS IS DANGEROUS</strong></span>. For giggles, I tried to set it to a lower size. The command threw an exception, but vCloud still displays it at the lower size. I'll update after I check if vSphere actually allowed this (I'd be surprised). If not, it'll be a bug report to VMware. Either way, make sure you are GROWING the disk. Mind the zeros.</p>
 
-[sourcecode language="powershell" wraplines="false"]
+{% highlight powershell %}
 
 $vm = Get-CIVM MyCIVM
 $newsize = “10240”
 
-(($vm.ExtensionData.Section | where {$_ -is [VMware.VimAutomation.Cloud.Views.OvfVirtualHardwareSection]}).item | where {$_.ResourceType.value -eq 17})[0].hostresource[0].AnyAttr[0].&amp;quot;#text&amp;quot; = $newsize
+(($vm.ExtensionData.Section | where {$_ -is [VMware.VimAutomation.Cloud.Views.OvfVirtualHardwareSection]}).item | where {$_.ResourceType.value -eq 17})[0].hostresource[0].AnyAttr[0]."#text" = $newsize
 ($vm.ExtensionData.Section | where {$_ -is [VMware.VimAutomation.Cloud.Views.OvfVirtualHardwareSection]}).updateserverdata()
 
-[/sourcecode]
+{% endhighlight %}
 
-<strong>Line 1:</strong> Get the VM
+<p><strong>Line 1:</strong> Get the VM
 <strong>Line 2:</strong> New size in megabytes.
 <strong>Line 4:</strong> In plain English...Get the disks from the OVF hardware section, set the <strong>first</strong> disk's new size to the new value.
-<strong>Line 5:</strong> Update server data.
+<strong>Line 5:</strong> Update server data.</p>
 
-[caption id="attachment_402" align="alignnone" width="490" caption="All greyed out, and it's even powered off. :("]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0031.png"><img class="size-full wp-image-402" title="SNAG-0031" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0031.png" alt="" width="490" height="374" /></a>[/caption]
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0031.png"><img class="size-full wp-image-402" title="SNAG-0031" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0031.png" alt="" width="490" height="374" /></a>
 
-[caption id="attachment_401" align="alignnone" width="472" caption="Newly expanded drive!!! YES!"]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0028.png"><img class="size-full wp-image-401" title="SNAG-0028" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0028.png" alt="" width="472" height="438" /></a>[/caption]
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0028.png"><img class="size-full wp-image-401" title="SNAG-0028" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0028.png" alt="" width="472" height="438" /></a>
 <h3>Bonus! Hot Modify Org Name!</h3>
-The fine chaps over at <a href="http://www.vcoteam.info" target="_blank">vcoteam.info</a> mentioned adding the ability to <a href="http://www.vcoteam.info/learn-vco/code-snippets-change-the-name-of-a-vcloud-director-organization.html" target="_blank">hot change an Org name</a> to the list, which you can't do in the GUI. Watch this. <strong>Three lines of code</strong>...Ready? You'll need to be a system admin for this one.
+<p>The fine chaps over at <a href="http://www.vcoteam.info" target="_blank">vcoteam.info</a> mentioned adding the ability to <a href="http://www.vcoteam.info/learn-vco/code-snippets-change-the-name-of-a-vcloud-director-organization.html" target="_blank">hot change an Org name</a> to the list, which you can't do in the GUI. Watch this. <strong>Three lines of code</strong>...Ready? You'll need to be a system admin for this one.</p>
 
-[sourcecode language="powershell" wraplines="false"]
+{% highlight powershell %}
 
 $org = Get-Org OrgName
-$org.ExtensionData.name = &amp;quot;NewName&amp;quot;
+$org.ExtensionData.name = "NewName"
 $org.ExtensionData.UpdateServerData()
 
-[/sourcecode]
+{% endhighlight %}
 
-<strong>Line 1:</strong> That
+<p><strong>Line 1:</strong> That
 <strong>Line 2:</strong> was
-<strong>Line 3:</strong> easy.
+<strong>Line 3:</strong> easy.</p>
 
-Of course, if you want the display name changed, you'll have to modify <span style="color:#3366ff;">$org.ExtensionData.FullName</span> as well ;)
+<p>Of course, if you want the display name changed, you'll have to modify <span style="color:#3366ff;">$org.ExtensionData.FullName</span> as well ;)</p>
 
-[caption id="attachment_403" align="alignnone" width="352" caption="Old and busted...."]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0025.png"><img class="size-full wp-image-403" title="SNAG-0025" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0025.png" alt="" width="352" height="125" /></a>[/caption]
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0025.png"><img class="size-full wp-image-403" title="SNAG-0025" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0025.png" alt="" width="352" height="125" /></a>
 
-[caption id="attachment_404" align="alignnone" width="360" caption="New Hotness..."]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0026.png"><img class="size-full wp-image-404" title="SNAG-0026" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0026.png" alt="" width="360" height="117" /></a>[/caption]
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0026.png"><img class="size-full wp-image-404" title="SNAG-0026" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0026.png" alt="" width="360" height="117" /></a>
 
-Have a specific vCloud API request? <strong>Let's hear it in the comments!</strong>
+<p>Have a specific vCloud API request? <strong>Let's hear it in the comments!</strong></p>
 
 Cheers!
 

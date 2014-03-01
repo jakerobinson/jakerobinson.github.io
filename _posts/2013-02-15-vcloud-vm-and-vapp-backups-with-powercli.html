@@ -27,21 +27,21 @@ meta:
 ---
 <a href="http://geekafterfive.files.wordpress.com/2013/02/snag-0230.png"><img class="alignnone size-full wp-image-789" alt="vcloud backups" src="http://geekafterfive.files.wordpress.com/2013/02/snag-0230.png" width="490" height="211" /></a>
 
-There are times when a snapshot doesn't cut it, and asking the Backup Administrator or Cloud Provider to set up backups doesn't make sense. Just a couple examples I've run into as a Cloud Provider:
+<p>There are times when a snapshot doesn't cut it, and asking the Backup Administrator or Cloud Provider to set up backups doesn't make sense. Just a couple examples I've run into as a Cloud Provider:
 <ul>
-	<li>Upgrades with testing could take longer than a snapshot should exist for.</li>
-	<li>Temporary workloads may need backups for "warm storage"</li>
-</ul>
-So where is the in-between? Wouldn't it be great to hot clone a VM or VApp with some light scheduling and retention capabilities?
+  <li>Upgrades with testing could take longer than a snapshot should exist for.</li>
+  <li>Temporary workloads may need backups for "warm storage"</li>
+</ul></p>
+<p>So where is the in-between? Wouldn't it be great to hot clone a VM or VApp with some light scheduling and retention capabilities?</p>
 <h2 style="text-align:left;"><span style="color:#3366ff;">vCloudBackups is the Powershell module for doing this.</span></h2>
-The vCloudBackups powershell module allows you to create local backups of VMs and vApps at any cloud provider running vCloud Director 1.5 or 5.1. By local, I mean the VMs and vApps will currently be cloned to the same storage the workloads are currently running on. If you don't trust your SAN with this level of backup, you probably need to talk to you Backup Administrator or cloud provider for that off-site backup. :)
+<p>The vCloudBackups powershell module allows you to create local backups of VMs and vApps at any cloud provider running vCloud Director 1.5 or 5.1. By local, I mean the VMs and vApps will currently be cloned to the same storage the workloads are currently running on. If you don't trust your SAN with this level of backup, you probably need to talk to you Backup Administrator or cloud provider for that off-site backup. :)</p>
 <h2><span style="color:#3366ff;">How does it work?</span></h2>
-Very simply, the module is just doing hot-clones of VMs or vApps through the vCloud API. When backing up just VMs, they are stored inside a vApp simply called 'Backups.' Each VM backup is named with the vApp origination, VM name, and a date/time of the backup.
+<p>Very simply, the module is just doing hot-clones of VMs or vApps through the vCloud API. When backing up just VMs, they are stored inside a vApp simply called 'Backups.' Each VM backup is named with the vApp origination, VM name, and a date/time of the backup.</p>
 
-VApp backups are simply just exact copies of the originals, except named titled as Backup with a date/time of the backup.
+<p>VApp backups are simply just exact copies of the originals, except named titled as Backup with a date/time of the backup.</p>
 
-"Retention" is built into the module as a number to keep. The oldest will automatically be deleted.
+<p>"Retention" is built into the module as a number to keep. The oldest will automatically be deleted.</p>
 
-Scheduling is accomplished through your Windows Task Scheduler and an included script called MyBackups.ps1. Credentials for your vCloud Director login are stored encrypted in a configuration file, meaning NO PLAIN TEXT PASSWORDS!
-
-If you are interested in the vCloud Backups script, please contact me on <a href="twitter.com/jakerobinson" target="_blank">Twitter</a>, <a href="https://plus.google.com/102640615339992680317/" target="_blank">Google+</a>, or the comments below.
+<p>Scheduling is accomplished through your Windows Task Scheduler and an included script called MyBackups.ps1. Credentials for your vCloud Director login are stored encrypted in a configuration file, meaning NO PLAIN TEXT PASSWORDS!
+</p>
+<p>If you are interested in the vCloud Backups script, please contact me on <a href="twitter.com/jakerobinson" target="_blank">Twitter</a>, <a href="https://plus.google.com/102640615339992680317/" target="_blank">Google+</a>, or the comments below.</p>
