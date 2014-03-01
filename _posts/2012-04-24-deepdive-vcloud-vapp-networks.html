@@ -77,16 +77,15 @@ Bust out your <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-ht
 
 To get you going, you'll want to retrieve the NetworkConfigSection of the vApp, which can be done like so:
 
-[sourcecode language="powershell" wraplines="false"]
+```powershell
 $networkConfigSection = (Get-CIVapp MyVApp).extensiondata.GetNetworkConfigSection()
-[/sourcecode]
+```
 
 Now we can start to explore. Using the schema as our guide, we can drill down to actual config.
 
-[sourcecode language="powershell" wraplines="false"]
+```powershell
 $networkConfigSection.NetworkConfig[0].configuration
-[/sourcecode]
-
+```
 Note the index at the end of NetworkConfig. Even if you only have 1 network in your vApp, you still have to specify an index of the collection or pipe to a where-object {$_.networkname -eq "NetworkName"}
 
 <em>FenceMode</em> specifies the vApp network type, which can be one of: <strong>isolated, bridged, natRouted</strong>
@@ -99,13 +98,12 @@ Note the index at the end of NetworkConfig. Even if you only have 1 network in y
 
 Pretty much all of this is modifiable (refer to the schema reference). Simply assign a new value to something and then run:
 
-[sourcecode language="powershell" wraplines="false"]
+```powershell
 $networkConfigSection.updateServerData()
-[/sourcecode]
-
+```
 Let's create some new networks:
 <h4><span style="color:#3366ff;">Isolated</span></h4>
-[sourcecode language="powershell" wraplines="false"]
+```powershell
 $mynetwork = new-object vmware.vimautomation.cloud.views.vappnetworkconfiguration
 $mynetwork.networkName = &quot;MyIsolatedNetwork&quot;
 
@@ -125,9 +123,9 @@ $mynetwork.Configuration.IpScope.IpRanges.IpRange[0].endaddress = &quot;192.168.
 $networkConfigSection = $vapp.ExtensionData.GetNetworkConfigSection()
 $networkConfigSection.networkconfig += $mynetwork
 $networkConfigSection.updateserverdata()
-[/sourcecode]
+```
 <h4><span style="color:#3366ff;">Bridged</span></h4>
-[sourcecode language="powershell" wraplines="false"]
+```powershell
 $orgNetworkName = &quot;MyOrgNetwork&quot;
 $orgNetwork = (Get-Org).extensiondata.networks.network | where {$_.name -eq $orgNetworkName}
 
@@ -144,9 +142,9 @@ $networkConfigSection = $vapp.ExtensionData.GetNetworkConfigSection()
 $networkConfigSection.networkconfig += $mynetwork
 $networkConfigSection.updateserverdata()
 
-[/sourcecode]
+```
 <h4><span style="color:#3366ff;">natRouted</span></h4>
-[sourcecode language="powershell" wraplines="false"]
+```powershell
 $orgNetworkName = &quot;MyOrgNetwork&quot;
 $orgNetwork = (Get-Org).extensiondata.networks.network | where {$_.name -eq $orgNetworkName}
 
@@ -176,26 +174,24 @@ $mynetwork.Configuration.features[0].isenabled = $false
 $networkConfigSection = $vapp.ExtensionData.GetNetworkConfigSection()
 $networkConfigSection.networkconfig += $mynetwork
 $networkConfigSection.updateserverdata()
-[/sourcecode]
+```
 
 Note on the above, I explicitly told it to create the natRouted network without a firewall. By default, it will enable the firewall, but we'll talk about in the services section.
 <h4><span style="color:#3366ff;">Removing Networks </span></h4>
 (Extra handy if you want to remove an Org network reference from a vApp!)
 
-[sourcecode language="powershell" wraplines="false"]
+```powershell
 $removeNetworkName = &quot;MyNetwork&quot;
 $networkConfigSection = $vapp.ExtensionData.GetNetworkConfigSection()
 $networkConfigSection.networkconfig = $networkConfigSection.networkconfig | where {$_.networkname -ne $removeNetworkName}
 $networkConfigSection.updateserverdata()
-[/sourcecode]
+```
 <h4><span style="color:#3366ff;">Services</span></h4>
 You'll find the services in the features collection here:
 
-[sourcecode language="powershell" wraplines="false"]
-
+```powershell
 $networkConfigSection.networkConfig[0].configuration.features
-
-[/sourcecode]
+```
 
 Here's what the natRouted network features look like in Powershell. I did a gettype() afterwards to show you the object types for each service.
 
@@ -205,8 +201,7 @@ The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/
 
 This is really handy if you have a spreadsheet full of rules, or want to add an entire range of IPs (which The vCloud Director UI and API do not support that at this time.) As stated above, the firewall service is added by default in a new natRouted network. By default it's set to deny all inbound.
 
-[sourcecode language="powershell" wraplines="false"]
-
+```powershell
 $fwService = New-Object vmware.vimautomation.cloud.views.firewallservice
 $fwService.DefaultAction = &quot;drop&quot;
 $fwService.LogDefaultAction = $false
@@ -243,13 +238,11 @@ $fwService.FirewallRule[1].destinationIp = &quot;192.168.2.10&quot;
 $fwService.FirewallRule[1].sourceport = &quot;-1&quot;
 $fwService.FirewallRule[1].sourceip = &quot;Any&quot;
 $fwService.FirewallRule[1].direction = &quot;in&quot;
-
-[/sourcecode]
+```
 
 If you are adding the firewall service to a new network, just paste the above code into the creation code. If you are adding to an existing network, you'll need some additional code. Warning, this currently deletes the old ruleset. This was meant to add firewall service where there was none before:
 
-[sourcecode language="powershell" wraplines="false"]
-
+```powershell
 $vappName = &quot;My vApp&quot;
 $vappNetworkName = &quot;My vApp Network&quot;
 $networkConfigSection = (Get-CIVApp $vappName).extensiondata.GetNetworkConfigSection()
@@ -265,13 +258,11 @@ if (!($vAppNetwork.Configuration.Features | where {$_ -is [vmware.vimautomation.
 # Add our new ruleset
 $vAppNetwork.Configuration.Features += $fwService
 $networkConfigSection.UpdateServerData()
-
-[/sourcecode]
+```
 
 The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/DhcpServiceType.html" target="_blank">DHCP Service</a>
 
-[sourcecode language="powershell" wraplines="false"]
-
+```powershell
 $dhcpService = New-Object vmware.vimautomation.cloud.views.dhcpservice
 $dhcpService.DefaultLeaseTime = &quot;3600&quot;
 $dhcpService.MaxLeaseTime = &quot;7200&quot;
@@ -280,8 +271,7 @@ $dhcpService.IsEnabled = $true
 $dhcpService.IpRange = New-Object vmware.vimautomation.cloud.views.iprange
 $dhcpService.IpRange.StartAddress = &quot;192.168.2.2&quot;
 $dhcpService.IpRange.EndAddress = &quot;192.168.2.50&quot;
-
-[/sourcecode]
+```
 
 Like the firewall service, DHCP is automatically added to a new a new network, but is set to disabled. If you want to use this code to add DHCP to an existing network, you'll just need to modify the existing service, or remove the old service and add this one. You will also need to omit the NAT service section when updating an existing network or you'll encounter an error.
 
@@ -307,7 +297,7 @@ Before we do, it's important to know the different NAT rule types:
 
 Ok, so let's take a peek at our NAT rules using Powershell with the help of System.Net.Webclient:
 
-[sourcecode language="powershell" wraplines="false"]&lt;/pre&gt;
+```powershell
 $vApp = Get-CIVApp &quot;vapp network testing&quot;
 $vAppNetworkName = &quot;natRouted&quot;
 
@@ -320,18 +310,15 @@ $webclient.Headers.Add(&quot;x-vcloud-authorization&quot;,$netconf.Client.Sessio
 $webclient.Headers.Add(&quot;accept&quot;,$netConfType)
 [xml]$netConfXML = $webclient.DownloadString($netConfUri)
 &lt;pre&gt;
-
-[/sourcecode]
+```
 
 Basically, we just downloaded the XML representation of the NetworkConfigSection, bypassing the .NET SDK and communicating directly to the vCloud API. REST APIs ROCK.
 
 We can now drill down to our Nat Rules:
 
-[sourcecode language="powershell" wraplines="false"]
-
+```powershell
 ($netConfXML.NetworkConfigSection.NetworkConfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.natrule
-
-[/sourcecode]
+```
 
 This will return something like:
 
@@ -339,11 +326,9 @@ This will return something like:
 
 You'll need to drill down one level further to view the rules. I am going to use a foreach to show all of them:
 
-[sourcecode language="powershell" wraplines="false"]
-
+```powershell
 ($netConfXML.NetworkConfigSection.NetworkConfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.natrule | foreach{$_.vmrule}
-
-[/sourcecode]
+```
 
 ...and you'll end up with something like this:
 
@@ -351,8 +336,7 @@ You'll need to drill down one level further to view the rules. I am going to use
 
 So, now we can GET our NAT rules, how to we SET them? We have to get a bit more complicated and use [System.Net.Webrequest]. This is an example of creating a new NAT rule for port translation. OneToOne rules will be a bit different, so again, this is purely for example. If you need something specific and can't figure it out, I'd be glad to help.
 
-[sourcecode language="powershell" wraplines="false"]
-
+```powershell
 $NatPort = &quot;53&quot;
 $natRule = ($netConfXML.NetworkConfigSection.Networkconfig | where {$_.networkname -eq $vAppNetworkName}).configuration.features.natservice.natrule[0].clonenode(1)
 $natRule.VmRule.ExternalPort = $NatPort
@@ -379,17 +363,14 @@ $streamReader = new-object System.IO.StreamReader($responseStream)
 $result = $streamReader.ReadtoEnd()
 $streamReader.close()
 $response.close()
-
-[/sourcecode]
-
+```
 &nbsp;
 
 The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/StaticRoutingServiceType.html" target="_blank">StaticRouting Service</a>
 
 The Static Routing service controls routing within the vShield Edge.
 
-[sourcecode language="powershell" wraplines="false"]
-
+```powershell
 $routeService = New-Object vmware.vimautomation.cloud.views.staticroutingservice
 $routeService.IsEnabled = $true
 
@@ -398,8 +379,7 @@ $routeService.StaticRoute[0].name = &quot;test&quot;
 $routeService.StaticRoute[0].network = &quot;192.168.1.0/24&quot;
 $routeService.StaticRoute[0].nexthopip = &quot;192.168.2.1&quot;
 $routeService.StaticRoute[0].interface = &quot;External&quot;
-
-[/sourcecode]
+```
 
 Again, if you are adding this to an existing network, you'll need to omit the Nat Service, or you will encounter an error.
 
