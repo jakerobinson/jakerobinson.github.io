@@ -25,7 +25,7 @@ meta:
   publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"194891866808922113";}}}
   _wpas_done_twitter: '1'
 ---
-There are three network "fence modes" (connection modes)  in vCloud Director: <strong>Isolated, Bridged, </strong>and<strong> Nat Routed</strong>. These apply to both Org and vApp networks, but for now we are talking in the context of vApps. We'll also talk about the vApp network features, courtesy of vShield Edge: <strong>DHCP, Firewall, Static Routing,</strong> and <strong>NAT.</strong>
+<p>There are three network "fence modes" (connection modes)  in vCloud Director: <strong>Isolated, Bridged, </strong>and<strong> Nat Routed</strong>. These apply to both Org and vApp networks, but for now we are talking in the context of vApps. We'll also talk about the vApp network features, courtesy of vShield Edge: <strong>DHCP, Firewall, Static Routing,</strong> and <strong>NAT.</strong></p>
 
 A quick note about terminology. The use of terms like "fence mode" are what you will see in the API. When applicable, I will refer to the Web UI term (in parenthesis) or with a screenshot.
 <h3><span style="color:#3366ff;">Isolated</span></h3>
@@ -33,31 +33,31 @@ A quick note about terminology. The use of terms like "fence mode" are what you 
 
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png"><img class=" wp-image-532   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Isolation network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png" alt="" width="446" height="49" /></a>
 
-<strong>Definition:</strong> Isolated networks are completely separate networks. By themselves, there is no connection or communication to other networks. Because they are completely isolated, you can do normally frowned upon things like reuse the same subnet over and over in different isolated networks. ;)
+<p><strong>Definition:</strong> Isolated networks are completely separate networks. By themselves, there is no connection or communication to other networks. Because they are completely isolated, you can do normally frowned upon things like reuse the same subnet over and over in different isolated networks. ;)</p>
 
-<strong>Usage:</strong> Isolated networks are great for back-end communication, such as database traffic. In a web application, for instance, you could give your web servers a second interface on the isolated network that database server resides on. Another use for an isolation network is not isolation at all, but providing your own routing device. Your routing appliance could have one interface on the isolated vApp network, and then another interface on an Org level network. If you wanted features such as dynamic routing, VPN to a specific vApp, Web Application Firewall, etc,  this would be the way to go.
+<p><strong>Usage:</strong> Isolated networks are great for back-end communication, such as database traffic. In a web application, for instance, you could give your web servers a second interface on the isolated network that database server resides on. Another use for an isolation network is not isolation at all, but providing your own routing device. Your routing appliance could have one interface on the isolated vApp network, and then another interface on an Org level network. If you wanted features such as dynamic routing, VPN to a specific vApp, Web Application Firewall, etc,  this would be the way to go.</p>
 
-<strong>Features:</strong> Because of their isolation, the only available vShield Edge feature is DHCP. Theoretically speaking, if DHCP were enabled and a vShield was instantiated, static routing should be available, but it's not. Firewall and NAT are not available because they both require connections to another network via vShield Edge.
+<p><strong>Features:</strong> Because of their isolation, the only available vShield Edge feature is DHCP. Theoretically speaking, if DHCP were enabled and a vShield was instantiated, static routing should be available, but it's not. Firewall and NAT are not available because they both require connections to another network via vShield Edge.</p>
 <h3><span style="color:#3366ff;">Bridged</span></h3>
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png"><img class=" wp-image-526   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Bridged" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png" alt="" width="392" height="310" /></a>
 
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png"><img class=" wp-image-531  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="SNAG-0084" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png" alt="" width="446" height="50" /></a>
 
-<strong>Definition:</strong> Bridged simply means you are directly connected to an Org network. In fact, the vCloud Web UI calls the connection "Direct" and shows up as the Org Network you are directly connected to.
+<p><strong>Definition:</strong> Bridged simply means you are directly connected to an Org network. In fact, the vCloud Web UI calls the connection "Direct" and shows up as the Org Network you are directly connected to.
+</p>
+<p><strong>Usage:</strong> Bridged (direct connected) networks are commonly used for VMs that need to be accessed from anywhere within your Organization, such as DNS or directory services.</p>
 
-<strong>Usage:</strong> Bridged (direct connected) networks are commonly used for VMs that need to be accessed from anywhere within your Organization, such as DNS or directory services.
-
-<strong>Features: </strong>None (at the vApp level). The Org level of this network may have feautures available, depending on it's type.
+<p><strong>Features: </strong>None (at the vApp level). The Org level of this network may have feautures available, depending on it's type.</p>
 <h3><span style="color:#3366ff;">NatRouted</span></h3>
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png"><img class=" wp-image-527  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="natRouted" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png" alt="" width="392" height="293" /></a>
 
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png"><img class=" wp-image-530   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="natrouted network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png" alt="" width="446" height="46" /></a>
 
-<strong>Definition:</strong> Connecting a vApp network to an Org network results in a 'natRouted' mode. This automatically invokes the creation of a vShield Edge appliance to connect the two different networks. The appliance has an internal and an external interface. The internal interfaces is on the vApp network, and the external on the org network.
+<p><strong>Definition:</strong> Connecting a vApp network to an Org network results in a 'natRouted' mode. This automatically invokes the creation of a vShield Edge appliance to connect the two different networks. The appliance has an internal and an external interface. The internal interfaces is on the vApp network, and the external on the org network.</p>
 
-<strong>Usage:</strong> NatRouted networks are required for firewall, NAT, and static routing services provided by vShield Edge. Typical usage includes securely publishing applications to the organization or Internet, but there is also the concept of "fencing," Fencing a network essentially hides a VM's MAC and IP addresses from the rest of your Virtual Datacenter. As long as each VM has a NAT address to the Org network, you can have duplicate IP addresses internally in the vApp because it is "hidden" by the vShield Edge device. This won't work if you are using static routing.
+<p><strong>Usage:</strong> NatRouted networks are required for firewall, NAT, and static routing services provided by vShield Edge. Typical usage includes securely publishing applications to the organization or Internet, but there is also the concept of "fencing," Fencing a network essentially hides a VM's MAC and IP addresses from the rest of your Virtual Datacenter. As long as each VM has a NAT address to the Org network, you can have duplicate IP addresses internally in the vApp because it is "hidden" by the vShield Edge device. This won't work if you are using static routing.</p>
 
-<strong>Features: </strong>All of 'em! DHCP, Firewall, NAT, Static Routing
+<p><strong>Features: </strong>All of 'em! DHCP, Firewall, NAT, Static Routing</p>
 <h3><span style="color:#3366ff;">More on fenced mode...</span></h3>
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png"><img class=" wp-image-528 " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fenced mode" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png" alt="" width="377" height="402" /></a>
 
@@ -65,13 +65,13 @@ A quick note about terminology. The use of terms like "fence mode" are what you 
 
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png"><img class="size-full wp-image-533  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fence vApp Checkbox" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png" alt="" width="490" height="198" /></a>
 
-There is a checkbox in the UI to "Fence vApp." This option takes a 'bridged' network, and turns it into 'natRouted.' It will show the network as "Fenced" in the UI. The VMs within this vApp still have Org Network IPs, but a vShield device is placed in between the VMs and the Org network. So essentially, you have duplicate subnets on the internal and external sides of the vShield Edge device. As a network guy, this gives me heartburn. Here's a screenshot to demonstrate a potential problem using the "fence vApp" option:
+<p>There is a checkbox in the UI to "Fence vApp." This option takes a 'bridged' network, and turns it into 'natRouted.' It will show the network as "Fenced" in the UI. The VMs within this vApp still have Org Network IPs, but a vShield device is placed in between the VMs and the Org network. So essentially, you have duplicate subnets on the internal and external sides of the vShield Edge device. As a network guy, this gives me heartburn. Here's a screenshot to demonstrate a potential problem using the "fence vApp" option:</p>
 
 <a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png"><img class="size-full wp-image-541   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fence woops" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png" alt="" width="490" height="459" /></a>
 
-Basically the "test (fenced)" VM will never be able to communicate with "test" with the same IP address of 192.168.1.102. The reverse is not true because you will be communicating to the external "test (fenced)" address of 192.168.1.105.
+<p>Basically the "test (fenced)" VM will never be able to communicate with "test" with the same IP address of 192.168.1.102. The reverse is not true because you will be communicating to the external "test (fenced)" address of 192.168.1.105.</p>
 
-My opinion? If you want to mask IP and MAC addresses, just use a natRouted type. No need to complexify when there is a perfect solution available.
+<p>My opinion? If you want to mask IP and MAC addresses, just use a natRouted type. No need to complexify when there is a perfect solution available.</p>
 <h3><span style="color:#3366ff;">Managing your vApp networks with PowerCLI</span></h3>
 Bust out your <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/index.html" target="_blank">vCloud API Schema Reference</a>, because we're going to be playing with the <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/NetworkConfigSectionType.html" target="_blank">NetworkConfigSection</a> of the vApp!
 
