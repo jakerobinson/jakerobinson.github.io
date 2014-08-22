@@ -19,44 +19,4 @@ The following PowerCLI script will go through a particular datastore, looking fo
 
 NOTE: Thanks Dean for testing and the bug fix!
 
-{% highlight powershell %}
-$datastore = "MyDatastore"
-$viserver = "MyVIServer"
-
-# add PowerCLI snapin
-Add-PSSnapin vmware.vimautomation.core -ErrorAction:SilentlyContinue
-
-# Connect to VI Server
-Connect-VIServer $viserver
-
-# Get the datastore we want to clean up
-$dsObject = Get-Datastore $datastore
-
-# Create a new PSDrive to that datastore
-New-PSDrive -Location $dsObject -name ds -PSProvider VimDatastore -root '\'
-
-# Set location to that drive
-Set-Location ds:
-
-# From here we are going to parse through
-# folders first looking for vmx files,
-# if there are no vmx files,
-# test for current.png and then remove the thumbnail and folder.
-
-$dsfolders = Get-ChildItem
-
-foreach ($dsfolder in $dsfolders)
-{
-    if (!(test-path "$dsfolder\*.vmx"))
-    {
-        if (test-path "$dsfolder\current.png")
-        {
-            remove-item "$dsfolder\current.png"
-            if ((get-childitem .\$dsfolder\* | measure-object).count -lt 1)
-            {
-                remove-item $dsfolder
-            }
-        }
-    }
-}
-{% endhighlight %}
+{% gist e64cf4d4cb8272ae6c40 %}

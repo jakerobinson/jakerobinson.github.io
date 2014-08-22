@@ -24,51 +24,6 @@ I decided over the weekend to dig deeper into the dvSwitch object in the API, an
 
 So, using the <a href="http://www.vmware.com/support/developer/vc-sdk/visdk41pubs/ApiReference/vim.DistributedVirtualSwitch.html#reconfigure" target="_blank">ReconfigureDvs_Task</a>, I wrote the following PowerCLI script:
 
-{% highlight powershell %}
-
-#Get the dvSwitch I want to edit
-$dvswitch = Get-VirtualSwitch name dvSwitch -distributed | Get-View
-
-#create the spec, note the object type
-$spec = New-Object VMware.Vim.DVSConfigSpec
-$spec.configVersion = $dvswitch.Config.ConfigVersion
-$spec.defaultPortConfig = New-Object VMware.Vim.VMwareDVSPortSetting
-$spec.defaultPortConfig.uplinkTeamingPolicy = New-Object VMware.Vim.VmwareUplinkPortTeamingPolicy
-
-#policy
-$spec.defaultPortConfig.uplinkTeamingPolicy.policy = New-Object VMware.Vim.StringPolicy
-$spec.defaultPortConfig.uplinkTeamingPolicy.policy.inherited = $false
-$spec.defaultPortConfig.uplinkTeamingPolicy.policy.value = "failover_explicit"
-
-#notify switches
-$spec.defaultPortConfig.uplinkTeamingPolicy.notifySwitches = New-Object VMware.Vim.BoolPolicy
-$spec.defaultPortConfig.uplinkTeamingPolicy.notifySwitches.inherited = $false
-$spec.defaultPortConfig.uplinkTeamingPolicy.notifySwitches.value = $true
-
-#rolling order
-$spec.defaultPortConfig.uplinkTeamingPolicy.rollingOrder = New-Object VMware.Vim.BoolPolicy
-$spec.defaultPortConfig.uplinkTeamingPolicy.rollingOrder.inherited = $false
-$spec.defaultPortConfig.uplinkTeamingPolicy.rollingOrder.value = $false
-
-#failure criteria
-$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria = New-Object VMware.Vim.DVSFailureCriteria
-$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria.inherited = $false
-$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria.checkBeacon = New-Object VMware.Vim.BoolPolicy
-$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria.checkBeacon.inherited = $false
-$spec.defaultPortConfig.uplinkTeamingPolicy.failureCriteria.checkBeacon.value = $true
-
-#uplink port order
-$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder = New-Object VMware.Vim.VMwareUplinkPortOrderPolicy
-$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.inherited = $false
-$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort = New-Object System.String[] (2)
-$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort[0] = "dvUplink1"
-$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort[1] = "dvUplink3"
-$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort = New-Object System.String[] (2)
-$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[0] = "dvUplink2"
-$spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[1] = "dvUplink4"
-
-#push the reconfig
-$dvswitch.ReconfigureDVS_Task($spec)
-{% endhighlight %}
+%{ gist 8c9a13360585a185f923 }
 
 (Note: Your failover settings may be very different. This script is just an example. See the <a href="http://www.vmware.com/support/developer/vc-sdk/visdk41pubs/ApiReference/vim.dvs.VmwareDistributedVirtualSwitch.VmwarePortConfigPolicy.html" target="_blank">VMwareDVSPortSetting</a> object type for more information...)
