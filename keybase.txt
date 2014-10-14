@@ -1,0 +1,66 @@
+==================================================================
+https://keybase.io/jakerobinson
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://geekafterfive.com
+  * I am jakerobinson (https://keybase.io/jakerobinson) on keybase.
+  * I have a public key with fingerprint 4F4D F3AF A435 7C1B 6E53  1860 DE6A 40F6 FEBC 1254
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "fingerprint": "4f4df3afa4357c1b6e531860de6a40f6febc1254",
+            "host": "keybase.io",
+            "key_id": "de6a40f6febc1254",
+            "uid": "6cc82e7e18828652770c496bdd651c00",
+            "username": "jakerobinson"
+        },
+        "service": {
+            "hostname": "geekafterfive.com",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1413316274,
+    "expire_in": 157680000,
+    "prev": "518da7808cd99bd84f913915e74594d868cf1ab7a106377fab80621d2923a56c",
+    "seqno": 3,
+    "tag": "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v1.1.3
+Comment: https://keybase.io/crypto
+
+yMHuAnicbZFbSBRRGID3ZltaqRGUVFijYVsqc79sbEJSiJpENxGM3bmcWcddd9aZ
+2fXWWhqSZuEiagq99CTWQ1ZY4EMt5kNgij2FUFho0hU0HyxF6ozYW+flcP7/+7//
+P+eM77Bbkq0xanxvjGu8ZZ1IrEYsFzzNj5sQQZUaEHcTEgAbm6yE/EALa0rIQNwI
+KZOSTPAyTxIUI2ICDSgCY2lUAjRPojItA0HEcIpEcpEqVTcroEbgdZCvqDAGD15F
+gtH/8JGNBC2KLA4YgLEsztIUzjCoSHK0IEk0hYkoaoI60EJ8DYB0NR8AmiooIV0N
+IbFcBGaiigjMuc32m5QfgAAvG0CTlSjIF9UaKAlrqqGKahCmqwwj7DarjYawidcB
+wbsp8kK1BB8AFkSBpiuwixuDpGgophkjMYLAaJwhcxFQH1Y04FVMgmJoFoXLbAOi
+UElhrMQzLMqKEscJEkvKHEZwGAUYkuJIiaVZUcZ4geExlCYYRuYFFqVxTMI5nOAp
+WkTMq9WGVMRNwDF5P1Tqij/EGxENILGxRKXDYk22bEmymV9oSd6W9u9j44rzT7lR
+X+bLGgstVtl8624wwk9OH330I/hRXU2tmN3vKLzb+7U0Hn+3FnT9stfbXy51ziyU
+2ZvSjzQ614dbBmqT7PHOjPWM4rkVx7GB1PScb0/vh6uL2upsjkTx2uHjoy9y5rpu
+Dlfu3vXdJ3aXvzp/bmalqML+M9Get7jz9u/51rzZ3quZBZ3d+o2sS8OjyoOJ7DVl
+YUiZivOJrkzf4Oc3d946+663ZS+tfBmZHPykz6WVWtuuYQUem3O08ErPma2nI8Z0
+WsrDFsvQ8/bL711BT0rDobOuAxZP/8HXJXgHOJk6v9zRs0ct70OnWi/m9H94cq/f
+VxJo3u46sc84tfzsL8XlEEQ=
+=18+s
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/jakerobinson
+
+==================================================================
+
