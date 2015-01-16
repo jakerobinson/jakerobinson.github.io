@@ -9,13 +9,13 @@ task :new do
   path = File.join('_posts', filename)
   post = <<-HTML
 --- 
-layout: TYPE
+layout: post
 title: "TITLE"
 date: DATE
 ---
 
 HTML
-  post.gsub!('TITLE', title).gsub!('DATE', Time.new.to_s).gsub!('TYPE', type)
+  post.gsub!('TITLE', title).gsub!('DATE', Time.new.to_s)
   File.open(path, 'w') do |file|
     file.puts post
   end
