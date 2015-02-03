@@ -3,7 +3,7 @@ language: ruby
 ruby:
 - 2.2
 
-script: bundle exec jekyll build && bundle exec htmlproof --checks-to-ignore ScriptCheck ./_site
+script: bundle exec jekyll build --safe && bundle exec htmlproof --checks-to-ignore ScriptCheck ./_site
 
 env:
   global:
