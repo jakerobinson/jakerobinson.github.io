@@ -29,9 +29,9 @@ meta:
 
 A quick note about terminology. The use of terms like "fence mode" are what you will see in the API. When applicable, I will refer to the Web UI term (in parenthesis) or with a screenshot.
 <h3><span style="color:#3366ff;">Isolated</span></h3>
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0077.png"><img class=" wp-image-525  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Isolation network" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0077.png" alt="" width="343" height="169" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0077.png"><img alt="a picture" class=" wp-image-525  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Isolation network" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0077.png" alt="" width="343" height="169" /></a>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png"><img class=" wp-image-532   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Isolation network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png" alt="" width="446" height="49" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png"><img alt="a picture" class=" wp-image-532   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Isolation network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0085.png" alt="" width="446" height="49" /></a>
 
 <p><strong>Definition:</strong> Isolated networks are completely separate networks. By themselves, there is no connection or communication to other networks. Because they are completely isolated, you can do normally frowned upon things like reuse the same subnet over and over in different isolated networks. ;)</p>
 
@@ -39,9 +39,9 @@ A quick note about terminology. The use of terms like "fence mode" are what you 
 
 <p><strong>Features:</strong> Because of their isolation, the only available vShield Edge feature is DHCP. Theoretically speaking, if DHCP were enabled and a vShield was instantiated, static routing should be available, but it's not. Firewall and NAT are not available because they both require connections to another network via vShield Edge.</p>
 <h3><span style="color:#3366ff;">Bridged</span></h3>
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png"><img class=" wp-image-526   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Bridged" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png" alt="" width="392" height="310" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png"><img alt="a picture" class=" wp-image-526   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="Bridged" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0079.png" alt="" width="392" height="310" /></a>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png"><img class=" wp-image-531  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="SNAG-0084" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png" alt="" width="446" height="50" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png"><img alt="a picture" class=" wp-image-531  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="SNAG-0084" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0084.png" alt="" width="446" height="50" /></a>
 
 <p><strong>Definition:</strong> Bridged simply means you are directly connected to an Org network. In fact, the vCloud Web UI calls the connection "Direct" and shows up as the Org Network you are directly connected to.
 </p>
@@ -49,9 +49,9 @@ A quick note about terminology. The use of terms like "fence mode" are what you 
 
 <p><strong>Features: </strong>None (at the vApp level). The Org level of this network may have feautures available, depending on it's type.</p>
 <h3><span style="color:#3366ff;">NatRouted</span></h3>
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png"><img class=" wp-image-527  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="natRouted" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png" alt="" width="392" height="293" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png"><img alt="a picture" class=" wp-image-527  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="natRouted" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0080.png" alt="" width="392" height="293" /></a>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png"><img class=" wp-image-530   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="natrouted network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png" alt="" width="446" height="46" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png"><img alt="a picture" class=" wp-image-530   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="natrouted network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0083.png" alt="" width="446" height="46" /></a>
 
 <p><strong>Definition:</strong> Connecting a vApp network to an Org network results in a 'natRouted' mode. This automatically invokes the creation of a vShield Edge appliance to connect the two different networks. The appliance has an internal and an external interface. The internal interfaces is on the vApp network, and the external on the org network.</p>
 
@@ -59,15 +59,15 @@ A quick note about terminology. The use of terms like "fence mode" are what you 
 
 <p><strong>Features: </strong>All of 'em! DHCP, Firewall, NAT, Static Routing</p>
 <h3><span style="color:#3366ff;">More on fenced mode...</span></h3>
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png"><img class=" wp-image-528 " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fenced mode" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png" alt="" width="377" height="402" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png"><img alt="a picture" class=" wp-image-528 " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fenced mode" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0081.png" alt="" width="377" height="402" /></a>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0082.png"><img class=" wp-image-529  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fenced network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0082.png" alt="" width="446" height="48" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0082.png"><img alt="a picture" class=" wp-image-529  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fenced network details" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0082.png" alt="" width="446" height="48" /></a>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png"><img class="size-full wp-image-533  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fence vApp Checkbox" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png" alt="" width="490" height="198" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png"><img alt="a picture" class="size-full wp-image-533  " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fence vApp Checkbox" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0087.png" alt="" width="490" height="198" /></a>
 
 <p>There is a checkbox in the UI to "Fence vApp." This option takes a 'bridged' network, and turns it into 'natRouted.' It will show the network as "Fenced" in the UI. The VMs within this vApp still have Org Network IPs, but a vShield device is placed in between the VMs and the Org network. So essentially, you have duplicate subnets on the internal and external sides of the vShield Edge device. As a network guy, this gives me heartburn. Here's a screenshot to demonstrate a potential problem using the "fence vApp" option:</p>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png"><img class="size-full wp-image-541   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fence woops" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png" alt="" width="490" height="459" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png"><img alt="a picture" class="size-full wp-image-541   " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="fence woops" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0089.png" alt="" width="490" height="459" /></a>
 
 <p>Basically the "test (fenced)" VM will never be able to communicate with "test" with the same IP address of 192.168.1.102. The reverse is not true because you will be communicating to the external "test (fenced)" address of 192.168.1.105.</p>
 
@@ -195,7 +195,7 @@ $networkConfigSection.networkConfig[0].configuration.features
 
 Here's what the natRouted network features look like in Powershell. I did a gettype() afterwards to show you the object types for each service.
 
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png"><img class="size-full wp-image-560 " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="SNAG-0091" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png" alt="" width="490" height="225" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png"><img alt="a picture" class="size-full wp-image-560 " style="border-image:initial;border-width:1px;border-color:gray;border-style:solid;" title="SNAG-0091" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0091.png" alt="" width="490" height="225" /></a>
 
 <p>The <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/FirewallServiceType.html" target="_blank">Firewall Service</a>
 
@@ -322,7 +322,7 @@ $webclient.Headers.Add("accept",$netConfType)
 
 This will return something like:
 
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png"><img class="size-full wp-image-569" title="SNAG-0093" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png" alt="" width="88" height="73" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png"><img alt="a picture" class="size-full wp-image-569" title="SNAG-0093" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0093.png" alt="" width="88" height="73" /></a>
 
 <p>You'll need to drill down one level further to view the rules. I am going to use a foreach to show all of them:
 </p>
@@ -332,7 +332,7 @@ This will return something like:
 
 ...and you'll end up with something like this:
 
-<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png"><img class="size-full wp-image-570" title="SNAG-0094" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png" alt="" width="439" height="206" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png"><img alt="a picture" class="size-full wp-image-570" title="SNAG-0094" src="http://geekafterfive.files.wordpress.com/2012/04/snag-0094.png" alt="" width="439" height="206" /></a>
 
 <p>So, now we can GET our NAT rules, how to we SET them? We have to get a bit more complicated and use [System.Net.Webrequest]. This is an example of creating a new NAT rule for port translation. OneToOne rules will be a bit different, so again, this is purely for example. If you need something specific and can't figure it out, I'd be glad to help.
 </p>

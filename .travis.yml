@@ -1,0 +1,9 @@
+sudo: false
+language: ruby
+ruby:
+- 2.2
+script: jekyll build && htmlproof ./_site
+
+env:
+  global:
+  - NOKOGIRI_USE_SYSTEM_LIBRARIES=true 
