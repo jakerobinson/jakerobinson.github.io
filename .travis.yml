@@ -3,8 +3,7 @@ language: ruby
 ruby:
 - 2.2
 
-install: gem install jekyll html-proofer --no-ri --no-rdoc
-script: jekyll build && htmlproof --checks-to-ignore ScriptCheck ./_site
+script: bundle exec jekyll build && bundle exec htmlproof --checks-to-ignore ScriptCheck ./_site
 
 env:
   global:
