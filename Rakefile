@@ -3,8 +3,8 @@ require 'cgi'
 require 'html/proofer'
 
 desc 'create new post' 
-task :new, :title do |t,args|
-  title = args.title
+task :new, [:title] do |t,args|
+  title = args[:title]
   slug = title.gsub(' ','-').downcase
 
   filename = "#{Time.new.strftime('%Y-%m-%d')}-#{slug}.markdown"

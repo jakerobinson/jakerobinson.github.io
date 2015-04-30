@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in jakerobinson.github.io.gemspec
-gemspec
+gem 'jekyll'
+gem 'rake'
+gem 'html-proofer'
