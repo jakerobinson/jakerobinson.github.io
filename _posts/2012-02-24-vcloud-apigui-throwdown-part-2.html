@@ -18,7 +18,7 @@ meta:
   publicize_results: a:1:{s:7:"twitter";a:1:{i:14061017;a:2:{s:7:"user_id";s:12:"jakerobinson";s:7:"post_id";s:18:"173044630785499136";}}}
   _wpas_done_twitter: '1'
 ---
-<a href="http://geekafterfive.files.wordpress.com/2012/02/punchout1.png"><img class=" wp-image-373 alignleft" title="punchout1" src="http://geekafterfive.files.wordpress.com/2012/02/punchout1.png" alt="" width="282" height="246" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/02/punchout1.png"><img alt="a picture" class=" wp-image-373 alignleft" title="punchout1" src="http://geekafterfive.files.wordpress.com/2012/02/punchout1.png" alt="" width="282" height="246" /></a>
 
 <p>In the first part of  <a title="vCloud API/GUI Throwdown!" href="http://geekafterfive.com/2011/11/01/vcloud-apigui-throwdown/">vCloud API/GUI Throwdown</a>, we watched in awe as the API completely pummeled the GUI. I gave you some hints in part 1 to do this on your own with the API, but this time around we're going to use PowerCLI 5.0.1 and the new vCloud Snap-in!</p>
 
@@ -64,11 +64,11 @@ $vdc.ExtensionData.CloneVApp($cloneParams)
 
 <p>The below image was my source vApp....</p>
 
-[caption id="attachment_405" align="alignnone" width="490" caption="My source vApp."]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0022.png"><img class="size-full wp-image-405 " title="SNAG-0022" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0022.png" alt="" width="490" height="211" /></a>[/caption]
+[caption id="attachment_405" align="alignnone" width="490" caption="My source vApp."]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0022.png"><img alt="a picture" class="size-full wp-image-405 " title="SNAG-0022" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0022.png" alt="" width="490" height="211" /></a>[/caption]
 
-[caption id="attachment_406" align="alignnone" width="490" caption="cloneVApp method return."]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0023.png"><img class="size-full wp-image-406" title="SNAG-0023" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0023.png" alt="" width="490" height="147" /></a>[/caption]
+[caption id="attachment_406" align="alignnone" width="490" caption="cloneVApp method return."]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0023.png"><img alt="a picture" class="size-full wp-image-406" title="SNAG-0023" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0023.png" alt="" width="490" height="147" /></a>[/caption]
 
-[caption id="attachment_407" align="alignnone" width="490" caption="Dolly, My cloned Sheep! Er, um... vApp!"]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0024.png"><img class="size-full wp-image-407" title="SNAG-0024" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0024.png" alt="" width="490" height="244" /></a>[/caption]
+[caption id="attachment_407" align="alignnone" width="490" caption="Dolly, My cloned Sheep! Er, um... vApp!"]<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0024.png"><img alt="a picture" class="size-full wp-image-407" title="SNAG-0024" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0024.png" alt="" width="490" height="244" /></a>[/caption]
 
 <h3>Hot Modify connected VM network</h3>
 <p>This will change the network, and assigned IP in vCloud Director if you are using a Static IP Pool address. This does NOT change the guest address. You'll have to change it manually in the OS or force re-customization.</p>
@@ -89,9 +89,9 @@ $vm = Get-CIVM MyCIVM
 <strong>Line 5:</strong>  This is a long line. It basically says Get the Network Connection OVF section and assign the first NIC to the new network.
 <strong>Line 7:</strong> UpdateServerData() This sends the updated changes to vCloud Director. Cool, eh?</p>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0029.png"><img class="size-full wp-image-399" title="SNAG-0029" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0029.png" alt="" width="490" height="149" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0029.png"><img alt="a picture" class="size-full wp-image-399" title="SNAG-0029" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0029.png" alt="" width="490" height="149" /></a>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0030.png"><img class="size-full wp-image-400" title="SNAG-0030" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0030.png" alt="" width="490" height="146" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0030.png"><img alt="a picture" class="size-full wp-image-400" title="SNAG-0030" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0030.png" alt="" width="490" height="146" /></a>
 
 <p><span style="color:#008000;">(Jake tip: You can use UpdateViewData() to refresh the VM with any data that may have changed. No need to re-'Get' the VM!)</span></p>
 <h3>Hot Modify Disk Size</h3>
@@ -114,9 +114,9 @@ $newsize = “10240”
 <strong>Line 4:</strong> In plain English...Get the disks from the OVF hardware section, set the <strong>first</strong> disk's new size to the new value.
 <strong>Line 5:</strong> Update server data.</p>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0031.png"><img class="size-full wp-image-402" title="SNAG-0031" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0031.png" alt="" width="490" height="374" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0031.png"><img alt="a picture" class="size-full wp-image-402" title="SNAG-0031" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0031.png" alt="" width="490" height="374" /></a>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0028.png"><img class="size-full wp-image-401" title="SNAG-0028" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0028.png" alt="" width="472" height="438" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0028.png"><img alt="a picture" class="size-full wp-image-401" title="SNAG-0028" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0028.png" alt="" width="472" height="438" /></a>
 <h3>Bonus! Hot Modify Org Name!</h3>
 <p>The fine chaps over at <a href="http://www.vcoteam.info" target="_blank">vcoteam.info</a> mentioned adding the ability to <a href="http://www.vcoteam.info/learn-vco/code-snippets-change-the-name-of-a-vcloud-director-organization.html" target="_blank">hot change an Org name</a> to the list, which you can't do in the GUI. Watch this. <strong>Three lines of code</strong>...Ready? You'll need to be a system admin for this one.</p>
 
@@ -134,9 +134,9 @@ $org.ExtensionData.UpdateServerData()
 
 <p>Of course, if you want the display name changed, you'll have to modify <span style="color:#3366ff;">$org.ExtensionData.FullName</span> as well ;)</p>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0025.png"><img class="size-full wp-image-403" title="SNAG-0025" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0025.png" alt="" width="352" height="125" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0025.png"><img alt="a picture" class="size-full wp-image-403" title="SNAG-0025" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0025.png" alt="" width="352" height="125" /></a>
 
-<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0026.png"><img class="size-full wp-image-404" title="SNAG-0026" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0026.png" alt="" width="360" height="117" /></a>
+<a href="http://geekafterfive.files.wordpress.com/2012/02/snag-0026.png"><img alt="a picture" class="size-full wp-image-404" title="SNAG-0026" src="http://geekafterfive.files.wordpress.com/2012/02/snag-0026.png" alt="" width="360" height="117" /></a>
 
 <p>Have a specific vCloud API request? <strong>Let's hear it in the comments!</strong></p>
 
