@@ -1,8 +1,11 @@
+require 'jekyll'
+require 'cgi'
+require 'html/proofer'
 
 desc 'create new post' 
-task :new do
-  title = ENV["title"] || "New Title"
-  slug = ENV["slug"] || title.gsub(' ','-').downcase
+task :new, [:title] do |t,args|
+  title = args[:title]
+  slug = title.gsub(' ','-').downcase
 
   filename = "#{Time.new.strftime('%Y-%m-%d')}-#{slug}.markdown"
   
@@ -12,6 +15,7 @@ task :new do
 layout: post
 title: "TITLE"
 date: DATE
+published: false
 ---
 
 HTML
