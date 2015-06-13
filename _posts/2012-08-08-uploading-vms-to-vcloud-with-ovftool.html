@@ -26,7 +26,7 @@ To do this, OVFtool simply requires a source (VMX or OVF), and a destination (a 
 The vCloud locator looks something like this:
 
 {% highlight powershell %}
-vcloud://username:password@host:port?org=name_of_org&amp;vapp=name_of_deployed_vapp&amp;catalog=name_of_catalog&amp;vappTemplate=name_of_vapp_template_in_catalog&amp;vdc=name_of_vdc
+vcloud://username:password@host:port?org=name_of_org&vapp=name_of_deployed_vapp&catalog=name_of_catalog&vappTemplate=name_of_vapp_template_in_catalog&vdc=name_of_vdc
 {% endhighlight %}
 
 As you can see, the vCloud Locator is a URL with all of the information needed to upload your OVF.
@@ -35,19 +35,19 @@ Because OVFtool is run from the command line, the simple choice when using Windo
 
 [caption id="attachment_684" align="alignnone" width="490"]<a href="http://geekafterfive.files.wordpress.com/2012/08/snag-0164.png"><img class="size-full wp-image-684" title="ovftool error" src="http://geekafterfive.files.wordpress.com/2012/08/snag-0164.png" alt="ovftool error" width="490" height="55" /></a> ovftool error[/caption]
 
-This is most likely because of the special characters ovftool uses in the URL (&amp;, :, ?, @). If I had to guess, I'd say it's the ampersand.
+This is most likely because of the special characters ovftool uses in the URL (&, :, ?, @). If I had to guess, I'd say it's the ampersand.
 
 I tried quoting out the vCloud Locator several different ways to get it to understand, but resorted to Powershell to save the day once again.
 
 {% highlight powershell %}
 
-$vCloudLocator = "vcloud://jake:password@vcloud.example.com:443?org=jake&amp;vappTemplate=MyTemplate&amp;catalog=private"
+$vCloudLocator = "vcloud://jake:password@vcloud.example.com:443?org=jake&vappTemplate=MyTemplate&catalog=private"
 
 $sourceFile = "C:\jake\MyVM.vmx"
 
 $ovftool = "C:\Program Files\VMware\VMware OVF Tool\ovftool.exe"
 
-&amp; $ovftool $sourceFile $vCloudLocator
+& $ovftool $sourceFile $vCloudLocator
 
 {% endhighlight %}
 
